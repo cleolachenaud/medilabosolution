@@ -1,5 +1,7 @@
 package com.openclassroom.medilabosolutionapplication.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -16,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 
@@ -27,7 +30,7 @@ public class Patient {
 	    @Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    @Column(name = "id")
-	    private int patientId;
+	    private Integer id;
 	 
 	    @Column(name = "nom")
 	    @NotNull
@@ -39,9 +42,9 @@ public class Patient {
 
 		@Column(name = "date_naissance")
 	    @NotNull
-	    private Date dateNaissance;
+	    private LocalDate dateNaissance;
 
-	    @Column(name = "genre", nullable = false, length = 1)
+	    @Column(name = "genre")
 	    @Enumerated(EnumType.STRING)
 	    @NotNull
 	    private Genre genre;
@@ -50,6 +53,8 @@ public class Patient {
 	    private String adresse;
 	 
 	    @Column(name = "telephone")
+	    // rejex pour être sur qu'un téléphone valide soit inséré en bdd
+	    @Pattern(regexp = "\\d{10}", message = "Le téléphone doit contenir exactement 10 chiffres")
 	    private Integer telephone;
 	    
 }
