@@ -1,14 +1,12 @@
-package com.openclassroom.medialabosolutionapplication.service;
+package com.openclassroom.medilabosolutionapplication.service;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.openclassroom.medialabosolutionapplication.repository.IPatientRepository;
-import com.openclassroom.medialabosolutionapplication.util.Genre;
-import com.openclassroom.medialabosolutionapplication.util.MessageErreur;
 import com.openclassroom.medilabosolutionapplication.model.Patient;
+import com.openclassroom.medilabosolutionapplication.util.MessageErreur;
 
 /**
  * classe qui implémente la logique métier relative à la création modification suppression et lecture d'une 
@@ -37,10 +35,6 @@ public class PatientServiceImpl implements IPatientService {
 	        throw new IllegalArgumentException(MessageErreur.PATIENT_EXISTE);
 	    }
 		// vérifier que les infos ne sont ni vides ni null 
-		verificationNom(patient.getNom());
-		verificationPrenom(patient.getPrenom());
-        verificationGenre(patient.getGenre());
-        verificationDateNaissance(patient.getDateNaissance());
         verificationTelephone(patient.getTelephone());
         verificationAdresse(patient.getAdresse());
 		return patientRepository.save(patient);
@@ -51,8 +45,6 @@ public class PatientServiceImpl implements IPatientService {
  */
 	@Override
 	public Optional<Patient> getPatientByName(String nom, String prenom) {
-		verificationNom(nom);
-		verificationPrenom(prenom);
 		Optional<Patient> patient =  patientRepository.findByNomAndPrenom(nom, prenom);
 		return patient;
 	}
@@ -62,11 +54,11 @@ public class PatientServiceImpl implements IPatientService {
 	 */
 	@Override
 	public Patient updatePatient(Patient patient) {
-	// vérifie que l'ID du patient existe en base de données
+	// vérifie que l'ID du patient existe en base de données et évite un appel inutil a la base
 		if (patient.getId() == null) {
 	        throw new IllegalArgumentException(MessageErreur.PATIENT_NULL);
 	    }
-
+// je récupère le patient déjà en bdd pour pouvoir le comparer avec celui passé en paramètres et ainsi ne modifier que les infos nécéssaires 
 	    Patient existingPatient = patientRepository.findById(patient.getId())
 	        .orElseThrow(() -> new IllegalArgumentException(MessageErreur.PATIENT_EXISTEPAS + patient.getId()));
 
@@ -96,33 +88,6 @@ public class PatientServiceImpl implements IPatientService {
 	    return patientRepository.save(existingPatient);
 	}
 
-	@Override
-	public void deletePatient(int id) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void verificationPrenom(String prenom) {
-		if(prenom == null || prenom.trim().isEmpty()) {
-			throw new IllegalArgumentException(MessageErreur.PRENOM_OBLIGATOIRE);
-		}
-	}
-
-	private void verificationNom(String nom) {
-		if(nom == null || nom.trim().isEmpty()) {
-			throw new IllegalArgumentException(MessageErreur.NOM_OBLIGATOIRE);
-		}
-	}
-	private void verificationGenre(Genre genre) {
-		if (genre == null || genre.toString().trim().isEmpty()) {
-	        throw new IllegalArgumentException(MessageErreur.GENRE_OBLIGATOIRE);
-	    }
-	}
-	private void verificationDateNaissance(LocalDate dateNaissance) {
-		if (dateNaissance == null) {
-	        throw new IllegalArgumentException(MessageErreur.DATENAISSANCE_OBLIGATOIRE);
-	    }
-	}
 
 	private void verificationTelephone(Integer telephone) {
 		if (telephone!= null && !telephone.toString().trim().isEmpty()) {

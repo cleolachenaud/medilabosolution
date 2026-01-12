@@ -11,10 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.openclassroom.medialabosolutionapplication.repository.IPatientRepository;
-import com.openclassroom.medialabosolutionapplication.service.PatientServiceImpl;
-import com.openclassroom.medialabosolutionapplication.util.Genre;
-import com.openclassroom.medialabosolutionapplication.util.MessageErreur;
 import com.openclassroom.medilabosolutionapplication.model.Patient;
+import com.openclassroom.medilabosolutionapplication.service.PatientServiceImpl;
+import com.openclassroom.medilabosolutionapplication.util.Genre;
+import com.openclassroom.medilabosolutionapplication.util.MessageErreur;
+import com.openclassroom.medilabosolutionapplication.utils.PatientTestFactory;
 
 public class PatientServiceImplTest {
 	private Patient patient;
@@ -23,7 +24,7 @@ public class PatientServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		// création du patient pour simuler le renseignement des données via IHM
-	    patient = patientTest("Dupont", "Jean", Genre.M);
+	    patient = PatientTestFactory.creationPatient("Dupont", "Jean", Genre.M);
 	    // mock du repository
 	    mockRepo = Mockito.mock(IPatientRepository.class);
 	    
@@ -31,7 +32,7 @@ public class PatientServiceImplTest {
 	@Test
 	void creerPatientNominal() {
 		// création des données
-	    Patient savedPatient = patientTest("Dupont", "Jean", Genre.M);
+	    Patient savedPatient = PatientTestFactory.creationPatient("Dupont", "Jean", Genre.M);
 	    savedPatient.setDateNaissance(patient.getDateNaissance());
 	    // init des mocks
 	    Mockito.when(mockRepo.save(patient)).thenReturn(savedPatient);
@@ -41,19 +42,6 @@ public class PatientServiceImplTest {
 	    // vérifications
 	    Assertions.assertNotNull(result);
 	    Assertions.assertEquals("Dupont", result.getNom());
-	}
-	
-	@Test
-	void creerPatientSansNom() {
-	    patient.setNom(null);
-	    // appel du service
-	    PatientServiceImpl service = new PatientServiceImpl(mockRepo);
-	    	
-	    IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-	        service.createPatient(patient);
-	    });
-	    // vérifications
-	    Assertions.assertEquals(MessageErreur.NOM_OBLIGATOIRE, thrown.getMessage());
 	}
 	
 	@Test
@@ -76,7 +64,7 @@ public class PatientServiceImplTest {
 	@Test
 	void updatePatientNominal() {
 		// création des données
-	    Patient patientAMaj = patientTest("Dupont", "NouveauPrenom", Genre.M);
+	    Patient patientAMaj = PatientTestFactory.creationPatient("Dupont", "NouveauPrenom", Genre.M);
 	    patientAMaj.setDateNaissance(patient.getDateNaissance());
 	    // init des mocks
 	    Mockito.when(mockRepo.findById(1)).thenReturn(Optional.of(patient));
@@ -92,22 +80,6 @@ public class PatientServiceImplTest {
 	    Assertions.assertEquals(patient.getDateNaissance(), misAJour.getDateNaissance());
 
 	    Mockito.verify(mockRepo).save(patient);
-	}
-	
-	
-
-	/**
-	 * méthode pour créer un patient de test
-	 * @return
-	 */
-	private Patient patientTest(String nom, String prenom, Genre genre) {
-		Patient patient = new Patient();
-		patient.setId(1);
-	    patient.setNom(nom);
-	    patient.setPrenom(prenom);
-	    patient.setGenre(genre);
-	    patient.setDateNaissance(LocalDate.of(1980, 1, 1));
-		return patient;
 	}
 
 }

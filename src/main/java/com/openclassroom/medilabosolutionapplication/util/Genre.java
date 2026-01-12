@@ -1,4 +1,4 @@
-package com.openclassroom.medialabosolutionapplication.util;
+package com.openclassroom.medilabosolutionapplication.util;
 
 
 /**

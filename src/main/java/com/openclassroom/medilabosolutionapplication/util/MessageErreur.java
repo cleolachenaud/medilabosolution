@@ -1,4 +1,4 @@
-package com.openclassroom.medialabosolutionapplication.util;
+package com.openclassroom.medilabosolutionapplication.util;
 
 public final class MessageErreur {
 	
@@ -11,6 +11,7 @@ public final class MessageErreur {
 	    public static final String PATIENT_EXISTEPAS = "le patient n'existe pas";
 	    public static final String PATIENT_NULL = "le patient est null";
 	    public static final String ADRESSE_OBLIGATOIRE = "L'adresse du patient est vide";
+	    public static final String CHAMP_TAILLE = "Le champ doit contenir entre 1 et 250 caractères";
 	    
 
 }

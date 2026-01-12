@@ -4,9 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-
-
-import com.openclassroom.medialabosolutionapplication.util.Genre;
+import com.openclassroom.medilabosolutionapplication.util.Genre;
+import com.openclassroom.medilabosolutionapplication.util.MessageErreur;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
@@ -19,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 
@@ -33,20 +33,23 @@ public class Patient {
 	    private Integer id;
 	 
 	    @Column(name = "nom")
-	    @NotNull
+	    @NotNull(message = "le nom est obligatoire")
+	    @Size(min = 1, max = 250, message = MessageErreur.CHAMP_TAILLE)
 	    private String nom;
 
 	    @Column(name = "prenom")
-	    @NotNull
+	    @NotNull(message = "Le prénom est obligatoire")
+	    @Size(min = 1, max = 250, message = MessageErreur.CHAMP_TAILLE)
 	    private String prenom;
 
 		@Column(name = "date_naissance")
-	    @NotNull
+		@NotNull(message = "La date de naissance est obligatoire")
+		
 	    private LocalDate dateNaissance;
 
 	    @Column(name = "genre")
 	    @Enumerated(EnumType.STRING)
-	    @NotNull
+	    @NotNull(message = "Le genre est obligatoire")
 	    private Genre genre;
 	 
 	    @Column(name = "adresse")

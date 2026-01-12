@@ -1,4 +1,4 @@
-package com.openclassroom.medialabosolutionapplication.service;
+package com.openclassroom.medilabosolutionapplication.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +13,6 @@ public interface IPatientService {
 	Patient createPatient(Patient patient);
     Optional<Patient> getPatientByName(String nom, String prenom);
     Patient updatePatient(Patient patient);
-    void deletePatient(int id);
+    
 
 }
