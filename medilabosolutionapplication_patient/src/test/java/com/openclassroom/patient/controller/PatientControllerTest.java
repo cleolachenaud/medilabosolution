@@ -1,4 +1,4 @@
-package com.openclassroom.medilabosolutionapplication.controller;
+package com.openclassroom.patient.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,10 +18,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.openclassroom.medilabosolutionapplication.util.PatientTestFactory;
 import com.openclassroom.patient.model.Patient;
 import com.openclassroom.patient.service.IPatientService;
 import com.openclassroom.patient.util.Genre;
+import com.openclassroom.patient.util.PatientTestFactory;
 
 @SpringBootTest(classes = com.openclassroom.patient.PatientApplication.class)
 @AutoConfigureMockMvc(addFilters = false)

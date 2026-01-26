@@ -1,4 +1,4 @@
-package com.openclassroom.medilabosolutionapplication_gateway;
+package com.openclassroom.gateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

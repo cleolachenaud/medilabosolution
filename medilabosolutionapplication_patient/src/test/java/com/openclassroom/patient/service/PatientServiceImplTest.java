@@ -1,4 +1,4 @@
-package com.openclassroom.medilabosolutionapplication.service;
+package com.openclassroom.patient.service;
 
 import java.util.Optional;
 
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.openclassroom.medilabosolutionapplication.util.PatientTestFactory;
+import com.openclassroom.patient.util.PatientTestFactory;
 import com.openclassroom.patient.model.Patient;
 import com.openclassroom.patient.repository.IPatientRepository;
 import com.openclassroom.patient.service.PatientServiceImpl;

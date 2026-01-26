@@ -1,4 +1,4 @@
-package com.openclassroom.medilabosolutionapplication.util;
+package com.openclassroom.patient.util;
 
 import java.time.LocalDate;
 
