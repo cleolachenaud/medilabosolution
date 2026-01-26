@@ -1,19 +1,15 @@
-package com.openclassroom.medilabosolutionapplication.repository;
+package com.openclassroom.patient.repository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Optional;
-
+import com.openclassroom.patient.model.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.openclassroom.medilabosolutionapplication.model.Patient;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Repository
 public interface IPatientRepository extends JpaRepository<Patient, Integer>{
-	
+
 	/**
 	 * pour vérifier si un patient existe deja en bdd
 	 * @param nom
@@ -30,5 +26,4 @@ public interface IPatientRepository extends JpaRepository<Patient, Integer>{
 	 */
 	Optional<Patient>findByNomAndPrenom(String nom, String prenom);
 	
-
 }

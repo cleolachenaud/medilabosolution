@@ -1,8 +1,5 @@
 package com.openclassroom.medilabosolutionapplication.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -10,12 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.openclassroom.medilabosolutionapplication.repository.IPatientRepository;
-import com.openclassroom.medilabosolutionapplication.model.Patient;
-import com.openclassroom.medilabosolutionapplication.service.PatientServiceImpl;
-import com.openclassroom.medilabosolutionapplication.util.Genre;
-import com.openclassroom.medilabosolutionapplication.util.MessageErreur;
-import com.openclassroom.medilabosolutionapplication.utils.PatientTestFactory;
+import com.openclassroom.medilabosolutionapplication.util.PatientTestFactory;
+import com.openclassroom.patient.model.Patient;
+import com.openclassroom.patient.repository.IPatientRepository;
+import com.openclassroom.patient.service.PatientServiceImpl;
+import com.openclassroom.patient.util.Genre;
+import com.openclassroom.patient.util.MessageErreur;
 
 public class PatientServiceImplTest {
 	private Patient patient;

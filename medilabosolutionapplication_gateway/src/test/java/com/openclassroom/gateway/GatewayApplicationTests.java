@@ -3,8 +3,10 @@ package com.openclassroom.medilabosolutionapplication_gateway;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class MedilabosolutionapplicationGatewayApplicationTests {
+import com.openclassroom.gateway.GatewayApplication;
+
+@SpringBootTest(classes=GatewayApplication.class)
+class GatewayApplicationTests {
 
 	@Test
 	void contextLoads() {

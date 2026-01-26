@@ -1,30 +1,32 @@
-package com.openclassroom.medilabosolutionapplication.service;
+package com.openclassroom.patient.service;
 
+import com.openclassroom.patient.model.Patient;
+import com.openclassroom.patient.repository.IPatientRepository;
+import com.openclassroom.patient.util.MessageErreur;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
-
-import com.openclassroom.medilabosolutionapplication.repository.IPatientRepository;
-import com.openclassroom.medilabosolutionapplication.model.Patient;
-import com.openclassroom.medilabosolutionapplication.util.MessageErreur;
-
-/**
- * classe qui implémente la logique métier relative à la création modification suppression et lecture d'une 
- * fiche d'information patient
- */
 @Service
-public class PatientServiceImpl implements IPatientService {
-	
+//@RequiredArgsConstructor
+//@Transactional
+public class PatientServiceImpl implements IPatientService{
+
 	private final IPatientRepository patientRepository;
+
 	
 	public PatientServiceImpl(IPatientRepository patientRepository) {
 		this.patientRepository = patientRepository;
 	}
 
-	@Override
 	/**
 	 * méthode pour créer un patient
 	 */
+	@Override
 	public Patient createPatient(Patient patient) {
 		// vérifie que le patient envoyé n'est pas null
 		if(patient == null) {
@@ -87,9 +89,21 @@ public class PatientServiceImpl implements IPatientService {
 
 	    return patientRepository.save(existingPatient);
 	}
+	
+	@Override
+	public void deletePatient(Integer patientId) {
+	    if (patientId == null) {
+	        throw new IllegalArgumentException(MessageErreur.PATIENT_NULL);
+	    }
+	    Patient patient = patientRepository.findById(patientId)
+	        .orElseThrow(() -> new IllegalArgumentException(
+	            MessageErreur.PATIENT_EXISTEPAS + patientId));
+	    
+	    patientRepository.delete(patient);
+	}
 
 
-	private void verificationTelephone(Integer telephone) {
+	private void verificationTelephone(String telephone) {
 		if (telephone!= null && !telephone.toString().trim().isEmpty()) {
 	        if (!telephone.toString().trim().matches("\\d{10}")) {
 	        throw new IllegalArgumentException(MessageErreur.TELEPHONE_INVALIDE);
@@ -101,6 +115,4 @@ public class PatientServiceImpl implements IPatientService {
 			throw new IllegalArgumentException(MessageErreur.ADRESSE_OBLIGATOIRE);
 		}
 	}
-
-
 }

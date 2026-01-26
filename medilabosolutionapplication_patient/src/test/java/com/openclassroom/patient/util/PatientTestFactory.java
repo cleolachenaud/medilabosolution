@@ -1,9 +1,10 @@
-package com.openclassroom.medilabosolutionapplication.utils;
+package com.openclassroom.medilabosolutionapplication.util;
 
 import java.time.LocalDate;
 
-import com.openclassroom.medilabosolutionapplication.model.Patient;
-import com.openclassroom.medilabosolutionapplication.util.Genre;
+import com.openclassroom.patient.model.Patient;
+import com.openclassroom.patient.util.Genre;
+
 
 public class PatientTestFactory {
 	
