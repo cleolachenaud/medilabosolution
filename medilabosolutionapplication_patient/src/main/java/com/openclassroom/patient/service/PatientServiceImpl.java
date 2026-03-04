@@ -1,15 +1,13 @@
 package com.openclassroom.patient.service;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.openclassroom.common.model.PatientDTO;
+import com.openclassroom.patient.util.MessageErreur;
 import com.openclassroom.patient.model.Patient;
 import com.openclassroom.patient.repository.IPatientRepository;
-import com.openclassroom.patient.util.MessageErreur;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 //@RequiredArgsConstructor
@@ -49,6 +47,13 @@ public class PatientServiceImpl implements IPatientService{
 	public Optional<Patient> getPatientByName(String nom, String prenom) {
 		Optional<Patient> patient =  patientRepository.findByNomAndPrenom(nom, prenom);
 		return patient;
+	}
+	/**
+	 * méthode pour trouver un patient par son Id, utile pour mettre à jour le patient
+	 */
+	@Override
+	public Optional<Patient> getPatientById(Integer id) {
+	    return patientRepository.findById(id);
 	}
 
 	/**
@@ -114,5 +119,47 @@ public class PatientServiceImpl implements IPatientService{
 		if(adresse != null && adresse.trim().isEmpty()) {
 			throw new IllegalArgumentException(MessageErreur.ADRESSE_OBLIGATOIRE);
 		}
+	}
+/**
+ * permet de convertir un patientDTO (classe common) en un patient (model) 
+ */
+	@Override
+	public Patient patientDTOToPatient(PatientDTO patientDTO) {
+		Patient patient = new Patient();
+		patient.setId(patientDTO.getId());
+		patient.setNom(patientDTO.getNom());
+		patient.setPrenom(patientDTO.getPrenom());
+		patient.setDateNaissance(patientDTO.getDateNaissance());
+		patient.setGenre(patientDTO.getGenre());
+		patient.setAdresse(normaliserChampFacultatif(patientDTO.getAdresse()));
+		patient.setTelephone(normaliserChampFacultatif(patientDTO.getTelephone()));
+		return patient;
+	}
+/**
+ * permet de convertir un patient(model) en un patient DTO (common) pour pouvoir le retourner facilement aux autres microservices
+ */
+	@Override
+	public PatientDTO patientToPatientDTO(Patient patient) {
+		PatientDTO patientDTO = new PatientDTO();
+		patientDTO.setId(patient.getId());
+		patientDTO.setNom(patient.getNom());
+		patientDTO.setPrenom(patient.getPrenom());
+		patientDTO.setDateNaissance(patient.getDateNaissance());
+		patientDTO.setGenre(patient.getGenre());
+		patientDTO.setAdresse(patient.getAdresse());
+		patientDTO.setTelephone(patient.getTelephone());
+		return patientDTO;
+	}
+	/**
+	 * permet de s'assurer que l'adresse ou le téléphone reste null et non vide si jamais ce champ n'est pas renseigné dans le front étant donné que 
+	 * c'est un champ non obligatoire
+	 * @param adresse
+	 * @return
+	 */
+	private String normaliserChampFacultatif(String champFacultatif) {
+	    if (champFacultatif == null || champFacultatif.trim().isEmpty()) {
+	        return null;
+	    }
+	    return champFacultatif.trim();
 	}
 }

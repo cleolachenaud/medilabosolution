@@ -7,12 +7,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.openclassroom.patient.util.PatientTestFactory;
+import com.openclassroom.common.util.Genre;
+import com.openclassroom.patient.util.MessageErreur;
 import com.openclassroom.patient.model.Patient;
 import com.openclassroom.patient.repository.IPatientRepository;
-import com.openclassroom.patient.service.PatientServiceImpl;
-import com.openclassroom.patient.util.Genre;
-import com.openclassroom.patient.util.MessageErreur;
+import com.openclassroom.patient.util.PatientTestFactory;
 
 public class PatientServiceImplTest {
 	private Patient patient;

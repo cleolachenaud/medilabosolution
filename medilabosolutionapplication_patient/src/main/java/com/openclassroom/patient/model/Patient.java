@@ -2,7 +2,7 @@ package com.openclassroom.patient.model;
 
 import java.time.LocalDate;
 
-import com.openclassroom.patient.util.Genre;
+import com.openclassroom.common.util.Genre;
 import com.openclassroom.patient.util.MessageErreur;
 
 import jakarta.persistence.Column;

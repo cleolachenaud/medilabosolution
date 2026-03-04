@@ -14,8 +14,10 @@
     <description>Application micro-services avec Gateway et Patient</description>
 
     <modules>
+        <module>common</module>
         <module>medilabosolutionapplication_gateway</module>
         <module>medilabosolutionapplication_patient</module>
+        <module>medilabosolutionapplication_front</module>
     </modules>
 
     <properties>

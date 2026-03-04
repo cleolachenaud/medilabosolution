@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.openclassroom.common.model.PatientDTO;
 import com.openclassroom.patient.model.Patient;
 import com.openclassroom.patient.service.IPatientService;
 
@@ -33,37 +34,51 @@ public class PatientController {
     }
 
     @GetMapping({"", "/"})
-    public ResponseEntity<Patient> getPatientByName(
+    public ResponseEntity<PatientDTO> getPatientByName(
            @NotBlank @RequestParam String nom,
            @NotBlank @RequestParam String prenom) {
 
         Optional<Patient> patient = patientService.getPatientByName(nom, prenom);
-        //System.out.println("Patient = "+ patient.toString());
-        return patient
+        Optional<PatientDTO> patientDTO = Optional.empty();
+        if (patient.isPresent() && patient.get() != null) {
+        	patientDTO = Optional.of(patientService.patientToPatientDTO(patient.get()));
+        }
+        return patientDTO
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<PatientDTO> getPatientById(@PathVariable Integer id) {
+        Optional<Patient> patient = patientService.getPatientById(id);
+        if (patient.isPresent()) {
+            PatientDTO patientDTO = patientService.patientToPatientDTO(patient.get());
+            return ResponseEntity.ok(patientDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(
+    public ResponseEntity<PatientDTO> updatePatient(
     		@PathVariable Integer id, 
-    		@RequestBody Patient patient) {
+    		@RequestBody PatientDTO patientDTO) {
     	System.out.println("id = " + id);
-    	System.out.println("patient = " + patient);
-        if (!id.equals(patient.getId())) {
+    	System.out.println("patient = " + patientDTO);
+        if (!id.equals(patientDTO.getId())) {
             return ResponseEntity.badRequest().build();
         }
 
-        Patient updated = patientService.updatePatient(patient);
-        return ResponseEntity.ok(updated);
+        Patient updated = patientService.updatePatient(patientService.patientDTOToPatient(patientDTO));
+        return ResponseEntity.ok(patientService.patientToPatientDTO(updated));
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Patient> createPatient(
-    		@Valid @RequestBody Patient patient) {
+    @PostMapping({"", "/"})
+    public ResponseEntity<PatientDTO> createPatient(
+    		@Valid @RequestBody PatientDTO patientDTO) {
     	
-        Patient created = patientService.createPatient(patient);
-        return ResponseEntity.status(201).body(created);
+        Patient created = patientService.createPatient(patientService.patientDTOToPatient(patientDTO));
+        return ResponseEntity.status(201).body(patientService.patientToPatientDTO(created));
     }
     
     @DeleteMapping("/{id}")

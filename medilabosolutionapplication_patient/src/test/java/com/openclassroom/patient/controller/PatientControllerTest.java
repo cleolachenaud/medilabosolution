@@ -1,5 +1,6 @@
 package com.openclassroom.patient.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,9 +19,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.openclassroom.common.model.PatientDTO;
+import com.openclassroom.common.util.Genre;
 import com.openclassroom.patient.model.Patient;
 import com.openclassroom.patient.service.IPatientService;
-import com.openclassroom.patient.util.Genre;
 import com.openclassroom.patient.util.PatientTestFactory;
 
 @SpringBootTest(classes = com.openclassroom.patient.PatientApplication.class)
@@ -31,8 +33,9 @@ public class PatientControllerTest {
     private MockMvc mockMvc;
 	@MockBean
 	private IPatientService patientService;
-	
+
 	private Patient patient;
+	private PatientDTO patientDTO;
 	private String patientJson = """
             {
             "id": 1,
@@ -55,12 +58,14 @@ public class PatientControllerTest {
 	void setUp() {
 		// création du patient pour simuler le renseignement des données via IHM
 	    patient = PatientTestFactory.creationPatient("Dupont", "Jean", Genre.M);
+	    patientDTO = PatientTestFactory.creationPatientDTO("Dupont", "Jean", Genre.M);
 	}
 
     @Test
     public void getPatientNominal() throws Exception {
-       
+
         when(patientService.getPatientByName("Dupont", "Jean")).thenReturn(Optional.of(patient));
+        when(patientService.patientToPatientDTO(patient)).thenReturn(patientDTO);
 
         mockMvc.perform(get("/patients/")
                 .param("nom", "Dupont")
@@ -86,10 +91,12 @@ public class PatientControllerTest {
     public void updatePatientNominal() throws Exception {
 
         Patient updatedPatient = PatientTestFactory.creationPatient("DupontUpdated", "Jean", Genre.M);
+        PatientDTO updatedPatientDTO = PatientTestFactory.creationPatientDTO("DupontUpdated", "Jean", Genre.M);
 
         // Mock du service : retourne le patient mis à jour
-        when(patientService.updatePatient(org.mockito.ArgumentMatchers.any(Patient.class)))
-            .thenReturn(updatedPatient);
+        when(patientService.patientDTOToPatient(any(PatientDTO.class))).thenReturn(patient);
+        when(patientService.updatePatient(patient)).thenReturn(updatedPatient);
+        when(patientService.patientToPatientDTO(updatedPatient)).thenReturn(updatedPatientDTO);
 
         mockMvc.perform(put("/patients/1")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -101,9 +108,10 @@ public class PatientControllerTest {
     @Test
     public void creerPatientNominal() throws Exception {
         // On mocke le service createPatient pour qu’il retourne le patient créé
-        when(patientService.createPatient(org.mockito.ArgumentMatchers.any(Patient.class)))
-            .thenReturn(patient);
-
+        when(patientService.createPatient(any(Patient.class))).thenReturn(patient);
+        when(patientService.patientToPatientDTO(any(Patient.class))).thenReturn(patientDTO);
+        when(patientService.patientDTOToPatient(any(PatientDTO.class))).thenReturn(patient);
+        
         mockMvc.perform(post("/patients/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(patientJsonCreation))
