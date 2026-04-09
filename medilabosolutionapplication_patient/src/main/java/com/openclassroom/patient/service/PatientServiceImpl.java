@@ -10,8 +10,6 @@ import com.openclassroom.patient.model.Patient;
 import com.openclassroom.patient.repository.IPatientRepository;
 
 @Service
-//@RequiredArgsConstructor
-//@Transactional
 public class PatientServiceImpl implements IPatientService{
 
 	private final IPatientRepository patientRepository;

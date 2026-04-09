@@ -11,12 +11,13 @@
     <packaging>pom</packaging>
 
     <name>medilabosolutionapplication</name>
-    <description>Application micro-services avec Gateway et Patient</description>
+    <description>Application micro-services avec Gateway et Patient et Notes et Front</description>
 
     <modules>
         <module>common</module>
         <module>medilabosolutionapplication_gateway</module>
         <module>medilabosolutionapplication_patient</module>
+        <module>medilabosolutionapplication_notes</module>
         <module>medilabosolutionapplication_front</module>
     </modules>
 
