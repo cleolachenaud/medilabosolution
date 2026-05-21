@@ -18,6 +18,7 @@
         <module>medilabosolutionapplication_gateway</module>
         <module>medilabosolutionapplication_patient</module>
         <module>medilabosolutionapplication_notes</module>
+        <module>medilabosolutionapplication_risk</module>
         <module>medilabosolutionapplication_front</module>
     </modules>
 

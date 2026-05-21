@@ -62,8 +62,6 @@ public class PatientController {
     public ResponseEntity<PatientDTO> updatePatient(
     		@PathVariable Integer id, 
     		@RequestBody PatientDTO patientDTO) {
-    	System.out.println("id = " + id);
-    	System.out.println("patient = " + patientDTO);
         if (!id.equals(patientDTO.getId())) {
             return ResponseEntity.badRequest().build();
         }
