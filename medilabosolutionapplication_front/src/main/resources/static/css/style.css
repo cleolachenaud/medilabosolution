@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* léger gris clair */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;  /* centre horizontalement */
+    align-items: flex-start;  /* aligne en haut verticalement */
+    min-height: 100vh;
+    padding-top: 40px;        /* espace en haut */
+}
+
+.container {
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center; /* centre titres, alertes, etc. */
+}
+
+h1, h2 {
+    margin-bottom: 20px;
+    font-weight: normal;
+}
+
+/* Formulaires : alignement à gauche pour labels/inputs */
+form.form-search,
+form.form-create,
+form.form-edit {
+    text-align: left;
+}
+
+/* Inputs, select, textarea - uniformes */
+input, select, textarea {
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-size: 1rem;
+    border: 1px solid #ced4da; /* style Bootstrap cohérent */
+    transition: border-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 4px;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 4px #4a90e2;
+}
+
+/* Radios inline */
+.form-check-inline {
+    margin-right: 15px;
+}
+
+.form-check-label,
+.form-check-input {
+    cursor: pointer;
+    font-weight: normal;
+}
+
+/* Boutons */
+.btn-primary,
+.btn-success,
+.btn-warning {
+    background-color: #4a90e2 !important; /* bleu moyen */
+    border-color: #4a90e2 !important;
+    color: white !important;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-success:hover,
+.btn-warning:hover {
+    background-color: #357ABD !important; /* bleu plus foncé au hover */
+    border-color: #357ABD !important;
+}
+
+/* Centrage bouton Modifier patient */
+form.form-modifier {
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* Mise en forme des paragraphes d'affichage patient */
+.section-patient p {
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.section-patient p strong {
+    display: inline-block;
+    width: 140px; /* largeur fixe alignée */
+}
+
+/* Alertes */
+.message-alert {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Marges entre form groups */
+.form-group {
+    margin-bottom: 15px;
+}

@@ -1,3 +1,7 @@
+.*
+**/.*
+**/mvnw
+**/mvnw.cmd
 # Compiled class files
 *.class
 
