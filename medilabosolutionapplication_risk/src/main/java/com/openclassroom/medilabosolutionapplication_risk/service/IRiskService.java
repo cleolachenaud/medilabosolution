@@ -1,4 +1,4 @@
-package service;
+package com.openclassroom.medilabosolutionapplication_risk.service;
 
 import com.openclassroom.common.model.RiskDTO;
 

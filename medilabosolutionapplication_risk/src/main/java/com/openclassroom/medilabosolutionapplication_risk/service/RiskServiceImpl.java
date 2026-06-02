@@ -1,4 +1,4 @@
-package service;
+package com.openclassroom.medilabosolutionapplication_risk.service;
 
 import java.text.Normalizer;
 import java.time.LocalDate;
@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.openclassroom.common.model.NotesDTO;
 import com.openclassroom.common.model.PatientDTO;
@@ -16,10 +17,10 @@ import com.openclassroom.common.model.RiskDTO;
 import com.openclassroom.common.util.ConstantesSeuilRisk;
 import com.openclassroom.common.util.Genre;
 import com.openclassroom.common.util.NiveauRisk;
+import com.openclassroom.medilabosolutionapplication_risk.proxies.IMicroserviceNotesProxy;
+import com.openclassroom.medilabosolutionapplication_risk.proxies.IMicroservicePatientsProxy;
 
-import proxies.IMicroserviceNotesProxy;
-import proxies.IMicroservicePatientsProxy;
-
+@Service
 public class RiskServiceImpl implements IRiskService{
 	
 	// liste des termes déclencheurs
@@ -96,14 +97,29 @@ public class RiskServiceImpl implements IRiskService{
 		// je determine le risque d'après les données ci-dessus
 		RiskDTO riskPatient = new RiskDTO();
 		riskPatient.setNiveauRisk(NiveauRisk.AUCUN_RISQUE);
-		if (nombreDeclencheursUniques < 2) {
+		
+		/* Les règles pour déterminer les niveaux de risque sont les suivantes :
+			- aucun risque (None) :
+				- Le dossier du patient ne contient aucune note du médecin contenant les déclencheurs (terminologie) ;
+			- risque limité (Borderline) :
+				- Le dossier du patient contient entre deux et cinq déclencheurs et le patient est âgé de plus de 30 ans ;
+			- danger (In Danger) :
+				- Si le patient est un hommede moins de 30 ans, alors trois termes déclencheurs doivent être présents.
+				- Si le patient est une femme et a moins de 30 ans, il faudra quatre termes déclencheurs.
+				- Si le patient a plus de 30 ans, alors il en faudra six ou sept ;
+			- apparition précoce (Early onset) :
+				- Si le patient est un homme de moins de 30 ans, alors au moins cinq termes déclencheurs sont nécessaires.
+				- Si le patient est une femme et a moins de 30 ans, il faudra au moins sept termes déclencheurs.
+				- Si le patient a plus de 30 ans, alors il en faudra huit ou plus.
+		 */
+		if (nombreDeclencheursUniques >= 2) {
 			// j'analyse le patient 
 			int agePatient = calculerAge(patient.getDateNaissance());
-			if(agePatient < ConstantesSeuilRisk.AGE_SEUIL) { // patient de moins de 30 ans
+			if(agePatient < ConstantesSeuilRisk.AGE_SEUIL) {// patient de moins de 30 ans  
 				if(Genre.M.equals(patient.getGenre())){ // si Homme
 					if(nombreDeclencheursUniques >= ConstantesSeuilRisk.SEUIL_ADULTE_APPARITIONPRECOCE ) {// apparition précoce cinq termes déclencheurs ou +
 						riskPatient.setNiveauRisk(NiveauRisk.APARITION_PRECOCE);
-					} else if (nombreDeclencheursUniques >= ConstantesSeuilRisk.SEUIL_ADULTE_DANGER ) {// danger  trois termes déclencheurs ou +
+					} else if (nombreDeclencheursUniques >= ConstantesSeuilRisk.SEUIL_HOMME_DANGER ) {// danger  trois termes déclencheurs ou +
 						riskPatient.setNiveauRisk(NiveauRisk.DANGER);
 					}
 				} else if(Genre.F.equals(patient.getGenre())){ // si femme
@@ -116,7 +132,7 @@ public class RiskServiceImpl implements IRiskService{
 			} else { // le patient à plus de 30 ans
 				if (nombreDeclencheursUniques >= ConstantesSeuilRisk.SEUIL_ADULTE_APPARITIONPRECOCE ){ // apparition précoce huit ou +
 					riskPatient.setNiveauRisk(NiveauRisk.APARITION_PRECOCE);
-				} else if (nombreDeclencheursUniques >= ConstantesSeuilRisk.SEUIL_HOMME_DANGER) {
+				} else if (nombreDeclencheursUniques >= ConstantesSeuilRisk.SEUIL_ADULTE_DANGER) {
 					riskPatient.setNiveauRisk(NiveauRisk.DANGER); // danger 6 ou +
 				} else if(nombreDeclencheursUniques >= ConstantesSeuilRisk.SEUIL_ADULTE_LIMITE) {
 					riskPatient.setNiveauRisk(NiveauRisk.RISQUE_LIMITE); // risque limité 2 ou +

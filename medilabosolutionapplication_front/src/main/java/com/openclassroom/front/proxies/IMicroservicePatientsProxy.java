@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.openclassroom.common.model.PatientDTO;
 
-@FeignClient(name = "medilabosolutionapplication-patient", url = "http://localhost:8080")
+@FeignClient(name = "medilabosolutionapplication-patient", url = "${spring.cloud.openfeign.client.gateway.url}")
 public interface IMicroservicePatientsProxy {
 	
    @GetMapping(value = "/patients")

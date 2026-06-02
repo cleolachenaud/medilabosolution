@@ -1,0 +1,51 @@
+services:
+    gateway:
+        build: ./medilabosolutionapplication_gateway
+        ports:
+            - "8080:8080"
+        networks:
+            - medilabosolution
+        environment:
+            SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: medilabosolutionapplication-patient
+            SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://patient:8081/
+            SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path= /patients/**
+            SPRING_CLOUD_GATEWAY_ROUTES[1]_ID: medilabosolutionapplication-notes
+            SPRING_CLOUD_GATEWAY_ROUTES[1]_URI: http://notes:8083/
+            SPRING_CLOUD_GATEWAY_ROUTES[1]_PREDICATES[0]: Path= /notes/**
+            SPRING_CLOUD_GATEWAY_ROUTES[2]_ID: medilabosolutionapplication-risk
+            SPRING_CLOUD_GATEWAY_ROUTES[2]_URI: http://risk:8084/
+            SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]: Path= /risk/**
+    patient:
+        build: ./medilabosolutionapplication_patient
+        ports:
+            - "8081:8081"
+        networks:
+            - medilabosolution
+    front:
+        build: ./medilabosolutionapplication_front
+        ports:
+            - "8082:8082"
+        networks:
+            - medilabosolution
+    notes:
+        build: ./medilabosolutionapplication_notes
+        ports:
+            - "8083:8083"
+        networks:
+            - medilabosolution
+    risk:
+        build: ./medilabosolutionapplication_risk
+        ports:
+            - "8084:8084"
+        networks:
+            - medilabosolution
+networks:
+    medilabosolution:
+        driver: bridge
+
+# docker-compose down ; docker-compose up --build -d
+#explications
+# docker-compose down : arrete docker compose
+#docker-compose up : lance docjer compose
+# -- build force le build
+# -d redonne la main lorsque les conteneurs sont lancés 

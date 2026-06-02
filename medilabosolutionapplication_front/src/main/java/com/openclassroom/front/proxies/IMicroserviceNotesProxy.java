@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.openclassroom.common.model.NotesDTO;
-@FeignClient(name = "medilabosolutionapplication-notes", url = "http://localhost:8080")
+@FeignClient(name = "medilabosolutionapplication-notes", url = "${spring.cloud.openfeign.client.gateway.url}")
 public interface IMicroserviceNotesProxy {
 		   
 	   @GetMapping(value = "/notes/patient/{patientId}")

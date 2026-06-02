@@ -14,6 +14,7 @@ import com.openclassroom.common.model.PatientDTO;
 import com.openclassroom.front.proxies.IMicroservicePatientsProxy;
 
 import feign.FeignException;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class FrontPatientController {
@@ -33,11 +34,12 @@ public class FrontPatientController {
    @GetMapping("/recherche")
    public String rechercherPatient(@RequestParam("nom") String nom,
                                   @RequestParam("prenom") String prenom,
-                                  Model model) {
+                                  Model model, HttpSession session) {
        PatientDTO patient = null;
        try {
            ResponseEntity<PatientDTO> response = patientProxy.getPatient(nom, prenom);
            patient = response.getBody();
+           session.setAttribute("patient", patient);
        } catch (FeignException.NotFound e) {
            patient = new PatientDTO();
            patient.setNom(nom);

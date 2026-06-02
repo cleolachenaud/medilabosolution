@@ -1,9 +1,7 @@
-package service;
+package com.openclassroom.medilabosolutionapplication_risk.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
@@ -22,12 +20,10 @@ import com.openclassroom.common.model.PatientDTO;
 import com.openclassroom.common.model.RiskDTO;
 import com.openclassroom.common.util.Genre;
 import com.openclassroom.common.util.NiveauRisk;
-
-import proxies.IMicroserviceNotesProxy;
-import proxies.IMicroservicePatientsProxy;
+import com.openclassroom.medilabosolutionapplication_risk.proxies.IMicroserviceNotesProxy;
+import com.openclassroom.medilabosolutionapplication_risk.proxies.IMicroservicePatientsProxy;
 
 public class RiskServiceTest {
-	public class RiskServiceImplTest {
 // mock des proxies 
 	    @Mock
 	    private IMicroserviceNotesProxy notesProxy;
@@ -102,7 +98,7 @@ public class RiskServiceTest {
 	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
 
 	        assertNotNull(risk);
-	        assertEquals(NiveauRisk.DANGER, risk.getNiveauRisk());
+	        assertEquals(NiveauRisk.APARITION_PRECOCE, risk.getNiveauRisk());
 	    }
 	    @Test
 	    public void testADangerHomme() throws Exception {
@@ -185,7 +181,6 @@ public class RiskServiceTest {
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.AUCUN_RISQUE, risk.getNiveauRisk());
 	    }
-	}
 // méthodes utiles pour créer patient et notes
 	private PatientDTO createPatient(Genre genre, int age ) {
 		PatientDTO patient = new PatientDTO();
