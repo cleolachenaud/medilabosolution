@@ -8,13 +8,7 @@
 <body>
     <div class="container">
         <h1>MediLaboSolution Patient</h1>
-         <!-- a supprimer -->
-<p>Patient : <span th:text="${patient != null}"></span></p>
-<p>Risk : <span th:text="${risk != null}"></span></p>
-<p>showCreateForm : <span th:text="${showCreateForm}"></span></p>
-<p>Patient dans modèle : <span th:text="${patient != null}"></span></p>
-<p>Nom patient : <span th:text="${patient?.nom}"></span></p>
- <!-- fin du assuprimer -->
+
         <!-- Formulaire de recherche -->
         <form th:action="@{/recherche}" method="get" class="mb-4 form-search">
             <div class="form-group">
@@ -99,8 +93,12 @@
 				
 				<!-- Affichage conditionnel du risque diabète -->
 				<div th:if="${risk != null}" class="mt-3 alert alert-info">
-				    <h5>Risque de diabète :</h5>
-				    <p>Niveau : <span th:text="${risk.niveauRisk}"></span></p>
+				    <h5>Risque de diabète :</h5> <span th:text="${niveauRiskLisible}"
+              th:classappend="
+                ${risk.niveauRisk == 'DANGER'} ? 'text-danger' :
+                (${risk.niveauRisk == 'RISQUE_LIMITE'} ? 'text-danger' :
+                (${risk.niveauRisk == 'AUCUN_RISQUE'} ? 'text-success' : ''))">
+        </span>
         		</div>
             </div>
          

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.openclassroom.common.model.PatientDTO;
 import com.openclassroom.common.model.RiskDTO;
+import com.openclassroom.common.util.NiveauRisk;
 import com.openclassroom.front.proxies.IMicroservicePatientsProxy;
 import com.openclassroom.front.proxies.IMicroserviceRiskProxy;
 
@@ -40,11 +41,20 @@ public class FrontRiskController {
         //ResponseEntity<PatientDTO> response = patientProxy.getPatientById(patientId);
         PatientDTO patient = patientProxy.getPatientById(patientId).getBody();
         //PatientDTO patient = (PatientDTO) session.getAttribute("patient");
-        System.out.println(patient);
+
         model.addAttribute("patient", patient);
     	model.addAttribute("showCreateForm", false);
     	model.addAttribute("showEditForm", false);
-        System.out.println("/risk/patient/" + patientId + " : " + patient.toString());
+    	  // Personnalisation du niveau de risque lisible
+        RiskDTO risk = (RiskDTO) model.getAttribute("risk");
+        if (risk != null && risk.getNiveauRisk() != null) {
+            String niveauLisible = formaterNiveauRisk(risk.getNiveauRisk());
+            model.addAttribute("niveauRiskLisible", niveauLisible);
+        } else {
+            model.addAttribute("niveauRiskLisible", "");
+        }
+        
+        
         return "accueilAppli";
     }
 
@@ -62,5 +72,18 @@ public class FrontRiskController {
             model.addAttribute("risk", null);
             model.addAttribute("message", "Erreur lors de la récupération du risque : " + e.getMessage());
         }
+    }
+    
+    private String formaterNiveauRisk(NiveauRisk niveauRisk) {
+        if (niveauRisk == null) return "";
+        switch (niveauRisk) {
+            case APARITION_PRECOCE: return "apparition précoce";
+            case DANGER: return "danger";
+            case RISQUE_LIMITE: return "risque limité";
+            case AUCUN_RISQUE: return "aucun risque";
+            default:
+                // Remplaçe les underscores en mettant en minuscules
+                return niveauRisk.toString().toLowerCase().replace('_', ' ');
+        }     
     }
 }
