@@ -1,4 +1,4 @@
-package com.openclassroom.medilabosolutionapplication_security;
+package com.openclassroom.medilabosolutionapplication.security;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

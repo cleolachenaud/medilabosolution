@@ -18,7 +18,7 @@ import com.openclassroom.medilabosolutionapplication.notes.service.INotesService
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/notes")
+@RequestMapping("/api/notes")
 public class NotesController {
 
     private final INotesService notesService;

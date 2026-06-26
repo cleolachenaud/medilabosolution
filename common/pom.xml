@@ -23,6 +23,10 @@
 		    <groupId>org.springframework.boot</groupId> 
 		    <artifactId>spring-boot-starter-validation</artifactId> 
 		</dependency>
+		<dependency>
+	        <groupId>com.fasterxml.jackson.core</groupId>
+	        <artifactId>jackson-databind</artifactId>
+	    </dependency>
 	</dependencies>
 
 	<build>
@@ -30,6 +34,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.14.1</version>
 				<configuration>
         			<parameters>true</parameters>
 					<annotationProcessorPaths>

@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
 @RestController
-@RequestMapping("/patients")
+@RequestMapping("/api/patients")
 @Validated
 public class PatientController {
 

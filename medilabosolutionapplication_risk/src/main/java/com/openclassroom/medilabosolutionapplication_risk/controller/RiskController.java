@@ -11,7 +11,7 @@ import com.openclassroom.medilabosolutionapplication_risk.service.IRiskService;
 
 
 @RestController
-@RequestMapping("/risk")
+@RequestMapping("/api/risk")
 public class RiskController {
     private final IRiskService riskService;
 	
@@ -22,7 +22,6 @@ public class RiskController {
 	   
 	@GetMapping("/patient/{id}")
 	public ResponseEntity<RiskDTO> geRiskByPatientId(@PathVariable("id") Integer id) {
-		System.out.println("Risk : /risk/pateint/" + id);
         RiskDTO niveauRisk = new RiskDTO();
 		try {
 			niveauRisk = riskService.calculNiveauRisk(id);

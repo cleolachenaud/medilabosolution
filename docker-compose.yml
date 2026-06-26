@@ -1,3 +1,8 @@
+
+volumes:
+  postgres_data:
+    driver: local
+    
 services:
     gateway:
         build: ./medilabosolutionapplication_gateway
@@ -15,6 +20,10 @@ services:
             SPRING_CLOUD_GATEWAY_ROUTES[2]_ID: medilabosolutionapplication-risk
             SPRING_CLOUD_GATEWAY_ROUTES[2]_URI: http://risk:8084/
             SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]: Path= /risk/**
+            SPRING_CLOUD_GATEWAY_ROUTES[3]_ID: medilabosolutionapplication-front
+            SPRING_CLOUD_GATEWAY_ROUTES[3]_URI: http://front:8084/
+            SPRING_CLOUD_GATEWAY_ROUTES[3]_PREDICATES[0]: Path= /front/**
+            
     patient:
         build: ./medilabosolutionapplication_patient
         ports:
@@ -39,6 +48,38 @@ services:
             - "8084:8084"
         networks:
             - medilabosolution
+
+    postgres:
+        image: postgres
+        volumes:
+            - postgres_data:/var/lib/postgres/data
+        environment:
+            POSTGRES_DB: keycloak
+            POSTGRES_USER: keycloak
+            POSTGRES_PASSWORD: keycloakkeycloak
+        networks:
+            - medilabosolution
+
+    keycloak:
+        image: quay.io/keycloak/keycloak:26.6.3
+        environment:
+            DB_VENDOR: POSTGRES
+            DB_ADDR: postgres
+            DB_DATABASE: keycloak
+            DB_USER: keycloak
+            DB_PASSWORD: keycloakkeycloak
+            DB_SCHEMA: public
+            KEYCLOAK_ADMIN: admin
+            KEYCLOAK_ADMIN_PASSWORD: admin
+            KEYCLOAK_USER: keycloak
+            KEYCLOAK_USER_PASSWORD: keycloakkeycloak
+        ports:
+            - 8085:8080
+        command:
+            - start-dev
+        networks:
+            - medilabosolution
+
 networks:
     medilabosolution:
         driver: bridge
@@ -46,6 +87,6 @@ networks:
 # docker-compose down ; docker-compose up --build -d
 #explications
 # docker-compose down : arrete docker compose
-#docker-compose up : lance docjer compose
-# -- build force le build
+#docker-compose up : lance docker compose
+# --build force le build
 # -d redonne la main lorsque les conteneurs sont lancés 
