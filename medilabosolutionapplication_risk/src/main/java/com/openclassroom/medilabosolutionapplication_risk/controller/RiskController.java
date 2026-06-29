@@ -3,6 +3,7 @@ package com.openclassroom.medilabosolutionapplication_risk.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,22 +15,22 @@ import com.openclassroom.medilabosolutionapplication_risk.service.IRiskService;
 @RequestMapping("/api/risk")
 public class RiskController {
     private final IRiskService riskService;
-	
+
     public RiskController(IRiskService riskService){
-    	this.riskService = riskService;
+        this.riskService = riskService;
     }
 
-	   
-	@GetMapping("/patient/{id}")
-	public ResponseEntity<RiskDTO> geRiskByPatientId(@PathVariable("id") Integer id) {
+    @GetMapping("/patient/{id}")
+    public ResponseEntity<RiskDTO> geRiskByPatientId(
+            @PathVariable("id") Integer id,
+            @RequestHeader("X-Authenticated-User") String authenticatedUser) {
         RiskDTO niveauRisk = new RiskDTO();
-		try {
-			niveauRisk = riskService.calculNiveauRisk(id);
-		} catch (Exception e) {
-			e.printStackTrace(); 
-	        return ResponseEntity.badRequest().body(niveauRisk);
-		}
-        // je retourne forcément une réponse positive étant donné que j'ai déjà identifié le patient. 
+        try {
+            niveauRisk = riskService.calculNiveauRisk(id, authenticatedUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(niveauRisk);
+        }
         return ResponseEntity.ok(niveauRisk);
     }
 }

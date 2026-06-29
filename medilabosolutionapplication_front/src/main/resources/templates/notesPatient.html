@@ -31,12 +31,12 @@
 				</table>
 			</div>
 			        <!-- Demande d'ajout d'une une note -->
-            <form th:action="@{'/front/notes/patient/ajouter'}" method="get" class="form-ajouter">
+            <form th:action="@{'/notes/patient/ajouter'}" method="get" class="form-ajouter">
                 <button type="submit" class="btn btn-warning">Ajouter notes</button>
             </form>
             <br/>
 		<!-- bouton pour retourner aux infos administratives du patient -->
-		   	 <form th:action="@{'/front/patients/' + ${patientId}}" method="get" class="mb-3">
+		   	 <form th:action="@{'/patients/' + ${patientId}}" method="get" class="mb-3">
 		    	<button type="submit" class="btn btn-success">Retour vers patient</button>
 			</form>
 		</div>
@@ -45,7 +45,7 @@
         <!-- Formulaire création note -->
         <div th:if="${showCreateForm}" class="section-create">
             <h2>Ajouter une note</h2>
-            <form th:action="@{'/front/notes/patient/' + ${patientId}}" method="post" th:object="${note}" class="mb-4 form-create">
+            <form th:action="@{'/notes/patient/' + ${patientId}}" method="post" th:object="${note}" class="mb-4 form-create">
                 
                 <div class="form-group">
                     <label for="nom">Contenu</label>

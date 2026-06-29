@@ -10,7 +10,7 @@
         <h1>MediLaboSolution Patient</h1>
 
         <!-- Formulaire de recherche -->
-        <form th:action="@{/front/recherche}" method="get" class="mb-4 form-search">
+        <form th:action="@{/recherche}" method="get" class="mb-4 form-search">
             <div class="form-group">
                 <label for="nom">Nom</label>
                 <input type="text" id="nom" name="nom" class="form-control" placeholder="Entrez le nom" required/>
@@ -29,7 +29,7 @@
         <!-- Formulaire création patient -->
         <div th:if="${showCreateForm}" class="section-create">
             <h2>Créer un nouveau patient</h2>
-            <form th:action="@{/front/patients}" method="post" th:object="${patient}" class="mb-4 form-create">
+            <form th:action="@{/patients}" method="post" th:object="${patient}" class="mb-4 form-create">
                 
                 <div class="form-group">
                     <label for="nom">Nom</label>
@@ -78,16 +78,16 @@
                 <p><strong>Téléphone :</strong> <span th:text="${patient.telephone}"></span></p>
 
                 <!-- Bouton pour démarrer la modification du patient -->
-				<form th:action="@{/front/patients/modifier/form}" method="get" class="form-modifier">
+				<form th:action="@{/patients/modifier/form}" method="get" class="form-modifier">
 				    <input type="hidden" name="id" th:value="${patient.id}" />
 				    <button type="submit" class="btn btn-warning">Modifier patient</button>
 				</form>
 				<!-- Bouton pour voir les notes du patient -->
-				<form th:action="@{'/front/notes/patient/'+ ${patient.id}}" method="get" class="form-modifier">
+				<form th:action="@{'/notes/patient/'+ ${patient.id}}" method="get" class="form-modifier">
 				    <button type="submit" class="btn btn-warning">Voir notes</button>
 				</form>
 				<!-- Bouton pour afficher le risque diabète -->
-				<form th:if="${risk == null}" th:action="@{'/front/risk/patient/'+ ${patient.id}}" method="get" class="form-modifier" style="display:inline-block; margin-left: 5px;">
+				<form th:if="${risk == null}" th:action="@{'/risk/patient/'+ ${patient.id}}" method="get" class="form-modifier" style="display:inline-block; margin-left: 5px;">
 				    <button type="submit" class="btn btn-info">Afficher risque diabète</button>
 				</form>
 				
@@ -106,7 +106,7 @@
             <!-- Formulaire de modification si showEditForm = true -->
             <div th:if="${showEditForm == true}" class="section-edit">
                 <h2>Modifier le patient</h2>
-                <form th:action="@{'/front/patients/' + ${patient.id}}" method="post" th:object="${patient}" class="form-edit">
+                <form th:action="@{'/patients/' + ${patient.id}}" method="post" th:object="${patient}" class="form-edit">
                     <input type="hidden" th:field="*{id}"/>
 
                     <div class="form-group">

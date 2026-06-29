@@ -14,16 +14,16 @@ import com.openclassroom.common.model.PatientDTO;
 @FeignClient(name = "medilabosolutionapplication-patient", url = "${spring.cloud.openfeign.client.gateway.url}")
 public interface IMicroservicePatientsProxy {
 	
-   @GetMapping(value = "/patients")
+   @GetMapping(value = "/api/patients")
    ResponseEntity<PatientDTO> getPatient(@RequestParam("nom") String nom, @RequestParam("prenom") String prenom);
    
-   @GetMapping(value = "/patients/{id}")
+   @GetMapping(value = "/api/patients/{id}")
    ResponseEntity<PatientDTO> getPatientById(@PathVariable("id") Integer id);
 
-   @PostMapping(value = "/patients")
+   @PostMapping(value = "/api/patients")
    ResponseEntity<PatientDTO> createPatient(@RequestBody PatientDTO patientDTO);
    
-   @PutMapping(value = "/patients/{id}")
+   @PutMapping(value = "/api/patients/{id}")
    ResponseEntity<PatientDTO> updatePatient(@PathVariable("id") Integer id, @RequestBody PatientDTO patientDTO);
 
 }

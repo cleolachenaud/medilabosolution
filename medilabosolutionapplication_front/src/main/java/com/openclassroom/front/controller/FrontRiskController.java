@@ -18,7 +18,10 @@ import feign.FeignException;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/front/risk")
+@RequestMapping("/risk")
+/**
+ * Classe de controller pour le Risk
+ */
 public class FrontRiskController {
 
     @Autowired

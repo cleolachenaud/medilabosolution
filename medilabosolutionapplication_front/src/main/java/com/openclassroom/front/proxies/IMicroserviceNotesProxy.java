@@ -13,10 +13,10 @@ import com.openclassroom.common.model.NotesDTO;
 @FeignClient(name = "medilabosolutionapplication-notes", url = "${spring.cloud.openfeign.client.gateway.url}")
 public interface IMicroserviceNotesProxy {
 		   
-	   @GetMapping(value = "/notes/patient/{patientId}")
+	   @GetMapping(value = "/api/notes/patient/{patientId}")
 	   ResponseEntity<List<NotesDTO>> getNotesByPatient(@PathVariable("patientId") Integer patientId);
 
-	   @PostMapping(value = "/notes/patient/{patientId}")
+	   @PostMapping(value = "/api/notes/patient/{patientId}")
 	   ResponseEntity<NotesDTO> createNoteForPatient(
 	       @PathVariable("patientId") Integer patientId,
 	       @RequestBody NotesDTO noteDTO);

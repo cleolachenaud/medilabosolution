@@ -53,7 +53,7 @@ public class NotesControllerTest {
     public void testGetNotesByPatientOK() throws Exception {
         when(notesService.findByPatientId(1)).thenReturn(Arrays.asList(sampleNote));
 
-        mockMvc.perform(get("/notes/patient/1"))
+        mockMvc.perform(get("/api/notes/patient/1"))
                 .andExpect(status().isOk())
                 //.andExpect(jsonPath("$[0].id").value("note1"))
                 //.andExpect(jsonPath("$[0].patientId").value(1))
@@ -67,7 +67,7 @@ public class NotesControllerTest {
     public void testGetNotesByPatient_returnsNoContent() throws Exception {
         when(notesService.findByPatientId(2)).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/notes/patient/2"))
+        mockMvc.perform(get("/api/notes/patient/2"))
                 .andExpect(status().isNoContent());
 
         verify(notesService).findByPatientId(2);
@@ -86,7 +86,7 @@ public class NotesControllerTest {
 
         when(notesService.createNoteForPatient(eq(1), eq("Nouvelle note"))).thenReturn(createdNote);
 
-        mockMvc.perform(post("/notes/patient/1")
+        mockMvc.perform(post("/api/notes/patient/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(noteDTO)))
                 .andExpect(status().isCreated())
@@ -105,7 +105,7 @@ public class NotesControllerTest {
 
         when(notesService.createNoteForPatient(eq(1), eq("Erreur note"))).thenThrow(new RuntimeException("Erreur"));
 
-        mockMvc.perform(post("/notes/patient/1")
+        mockMvc.perform(post("/api/notes/patient/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(noteDTO)))
                 .andExpect(status().isInternalServerError());

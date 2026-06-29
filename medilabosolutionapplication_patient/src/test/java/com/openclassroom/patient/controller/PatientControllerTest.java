@@ -67,7 +67,7 @@ public class PatientControllerTest {
         when(patientService.getPatientByName("Dupont", "Jean")).thenReturn(Optional.of(patient));
         when(patientService.patientToPatientDTO(patient)).thenReturn(patientDTO);
 
-        mockMvc.perform(get("/patients/")
+        mockMvc.perform(get("/api/patients")
                 .param("nom", "Dupont")
                 .param("prenom", "Jean")
                 .accept(MediaType.APPLICATION_JSON))
@@ -80,7 +80,7 @@ public class PatientControllerTest {
     public void getPatientNomNonTrouve() throws Exception {
         when(patientService.getPatientByName("Inexistant", "Patient")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/patients/")
+        mockMvc.perform(get("/api/patients")
                 .param("nom", "Inexistant")
                 .param("prenom", "Patient")
                 .accept(MediaType.APPLICATION_JSON))
@@ -98,7 +98,7 @@ public class PatientControllerTest {
         when(patientService.updatePatient(patient)).thenReturn(updatedPatient);
         when(patientService.patientToPatientDTO(updatedPatient)).thenReturn(updatedPatientDTO);
 
-        mockMvc.perform(put("/patients/1")
+        mockMvc.perform(put("/api/patients/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(patientJson))
             .andExpect(status().isOk())
@@ -112,7 +112,7 @@ public class PatientControllerTest {
         when(patientService.patientToPatientDTO(any(Patient.class))).thenReturn(patientDTO);
         when(patientService.patientDTOToPatient(any(PatientDTO.class))).thenReturn(patient);
         
-        mockMvc.perform(post("/patients/")
+        mockMvc.perform(post("/api/patients/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(patientJsonCreation))
             .andExpect(status().isCreated()) // HTTP 201

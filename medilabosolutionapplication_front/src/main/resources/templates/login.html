@@ -8,6 +8,16 @@
 
 <div class="container">
   <h1>Login</h1>
+  <form th:action="@{/login}" th:object="${loginRequest}" method="post">
+    <div>
+      <input type="text" name="username" th:field="*{username}" placeholder="Nom d'utilisateur" required />
+    </div>
+    <div>
+      <input type="password" name="password" th:field="*{password}" placeholder="Mot de passe" required />
+    </div>
+    <div th:if="${erreur}" th:text="${erreur}"></div>
+    <button type="submit">Se connecter</button>
+  </form>
 </div>
 
 <script type="text/javascript" src="webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>

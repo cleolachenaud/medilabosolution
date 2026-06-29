@@ -32,7 +32,7 @@ public class KeycloakAuthService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "password");
-        body.add("client_id", "medilabosolution_client");
+        body.add("client_id", "medilabosolution_cli");
         body.add("username", username);
         body.add("password", password);
 

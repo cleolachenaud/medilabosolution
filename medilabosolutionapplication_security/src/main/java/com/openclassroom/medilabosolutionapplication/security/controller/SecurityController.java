@@ -1,5 +1,7 @@
 package com.openclassroom.medilabosolutionapplication.security.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,28 +20,35 @@ import com.openclassroom.medilabosolutionapplication.security.service.KeycloakAu
 @RestController
 @RequestMapping("/auth")
 public class SecurityController {
+	private static final Logger logger = LogManager.getLogger("SecurityController");
 
 	@Autowired
     private KeycloakAuthService keycloakAuthService;
+
     
     @GetMapping("/validate")
     public ResponseEntity<Void> validateToken(@RequestHeader(value="Authorization", required=false) String header) {	
+    	logger.info("header transmis : " + header.toString());
     	if (header == null || !header.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     	}
         return ResponseEntity.ok().build();
     }
     
-    @PostMapping("/login)")
+    
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest) {
+    	logger.info("login : " + loginRequest.toString());
         try {
             KeycloakTokenResponseDTO token = keycloakAuthService.login(
                 loginRequest.getUsername(),
                 loginRequest.getPassword()
             );
+        	logger.info("login OK : " + token.toString());
             return ResponseEntity.ok(token);
 
         } catch (BadCredentialsException e) {
+        	logger.info("login UNAUTHORIZED + " + e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Identifiants invalides");
         }

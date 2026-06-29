@@ -43,28 +43,22 @@ public class RiskServiceImpl implements IRiskService{
     }
         
     /**
-     * retourne le score de risque diabète du patient en fonction des règles métiers
+     * retourne le score de risque diabète du patient en fonction des règles métiers.
+     * @param authenticatedUser header X-Authenticated-User à propager vers patient et notes
      */
 	@Override
-	public RiskDTO calculNiveauRisk(Integer patientId) throws Exception {
-		//je recupère le patient
-		PatientDTO patient = getPatient(patientId);
-		// je recupère les notes
-		List<NotesDTO> notes = getNotes(patientId);
-		// je calcule le risque à partir des données 
+	public RiskDTO calculNiveauRisk(Integer patientId, String authenticatedUser) throws Exception {
+		PatientDTO patient = getPatient(patientId, authenticatedUser);
+		List<NotesDTO> notes = getNotes(patientId, authenticatedUser);
 		RiskDTO risk = calculRisk(patient, notes);
-		// je retourne le risque
 		return risk;
 	}
 
 	/**
-	 * récupère les infos du patient (nous ce qui nous interesse ce sont l'age et le sexe
-	 * @param patientId
-	 * @return
-	 * @throws Exception
+	 * récupère les infos du patient
 	 */
-	private PatientDTO getPatient(Integer patientId) throws Exception {
-		ResponseEntity<PatientDTO> patient = patientProxy.getPatientById(patientId);
+	private PatientDTO getPatient(Integer patientId, String authenticatedUser) throws Exception {
+		ResponseEntity<PatientDTO> patient = patientProxy.getPatientById(patientId, authenticatedUser);
 		if(!patient.hasBody()) {
 			throw new Exception("problème lors de la récupération du patient");
 		}
@@ -72,13 +66,11 @@ public class RiskServiceImpl implements IRiskService{
 	}
 	
 	/**
-	 * récupère les notes du patient
-	 * dans le cas d'un patient qui n' as pas de notes on retourne une liste vide. 
-	 * @param patientId
-	 * @return
+	 * récupère les notes du patient.
+	 * Dans le cas d'un patient sans notes, on retourne une liste vide.
 	 */
-	private List<NotesDTO> getNotes(Integer patientId){
-		ResponseEntity<List<NotesDTO>> listeNotes = notesProxy.getNotesByPatient(patientId);
+	private List<NotesDTO> getNotes(Integer patientId, String authenticatedUser){
+		ResponseEntity<List<NotesDTO>> listeNotes = notesProxy.getNotesByPatient(patientId, authenticatedUser);
 		if (!listeNotes.hasBody() || listeNotes.getBody() == null) {
 		    return List.of();
 		}

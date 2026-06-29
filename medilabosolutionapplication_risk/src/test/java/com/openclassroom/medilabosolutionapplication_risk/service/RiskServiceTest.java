@@ -24,6 +24,8 @@ import com.openclassroom.medilabosolutionapplication_risk.proxies.IMicroserviceN
 import com.openclassroom.medilabosolutionapplication_risk.proxies.IMicroservicePatientsProxy;
 
 public class RiskServiceTest {
+	
+	String authenticatedUser = "user";
 // mock des proxies 
 	    @Mock
 	    private IMicroserviceNotesProxy notesProxy;
@@ -47,10 +49,10 @@ public class RiskServiceTest {
 	        List<NotesDTO> notes = new ArrayList<>();
 		    notes.add(createNote("Aucune information pertinente"));
 
-	        when(patientProxy.getPatientById(patientId)).thenReturn(ResponseEntity.ok(patient));
-	        when(notesProxy.getNotesByPatient(patientId)).thenReturn(ResponseEntity.ok(notes));
+	        when(patientProxy.getPatientById(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(patient));
+	        when(notesProxy.getNotesByPatient(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(notes));
 
-	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
+	        RiskDTO risk = riskService.calculNiveauRisk(patientId, authenticatedUser);
 
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.AUCUN_RISQUE, risk.getNiveauRisk());
@@ -62,10 +64,10 @@ public class RiskServiceTest {
 	        List<NotesDTO> notes = new ArrayList<>();
 		    notes.add(createNote("taille et poids"));
 
-	        when(patientProxy.getPatientById(patientId)).thenReturn(ResponseEntity.ok(patient));
-	        when(notesProxy.getNotesByPatient(patientId)).thenReturn(ResponseEntity.ok(notes));
+	        when(patientProxy.getPatientById(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(patient));
+	        when(notesProxy.getNotesByPatient(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(notes));
 
-	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
+	        RiskDTO risk = riskService.calculNiveauRisk(patientId, authenticatedUser);
 
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.RISQUE_LIMITE, risk.getNiveauRisk());
@@ -77,10 +79,10 @@ public class RiskServiceTest {
 	        List<NotesDTO> notes = new ArrayList<>();
 		    notes.add(createNote("taille et poids"));
 		    notes.add(createNote("fumeur, fumeuse anormal et cholesterol sans vertiges"));
-	        when(patientProxy.getPatientById(patientId)).thenReturn(ResponseEntity.ok(patient));
-	        when(notesProxy.getNotesByPatient(patientId)).thenReturn(ResponseEntity.ok(notes));
+	        when(patientProxy.getPatientById(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(patient));
+	        when(notesProxy.getNotesByPatient(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(notes));
 
-	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
+	        RiskDTO risk = riskService.calculNiveauRisk(patientId, authenticatedUser);
 
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.DANGER, risk.getNiveauRisk());
@@ -92,10 +94,10 @@ public class RiskServiceTest {
 	        List<NotesDTO> notes = new ArrayList<>();
 		    notes.add(createNote("taille et poids"));
 		    notes.add(createNote("hemoglobine a1c, microalbumine, fumeur, fumeuse anormal et cholesterol sans vertiges"));
-	        when(patientProxy.getPatientById(patientId)).thenReturn(ResponseEntity.ok(patient));
-	        when(notesProxy.getNotesByPatient(patientId)).thenReturn(ResponseEntity.ok(notes));
+	        when(patientProxy.getPatientById(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(patient));
+	        when(notesProxy.getNotesByPatient(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(notes));
 
-	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
+	        RiskDTO risk = riskService.calculNiveauRisk(patientId, authenticatedUser);
 
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.APARITION_PRECOCE, risk.getNiveauRisk());
@@ -108,10 +110,10 @@ public class RiskServiceTest {
 		    notes.add(createNote("Patient fumeur anormal"));
 		    notes.add(createNote("Présence d'anticorps"));
 
-	        when(patientProxy.getPatientById(patientId)).thenReturn(ResponseEntity.ok(patient));
-	        when(notesProxy.getNotesByPatient(patientId)).thenReturn(ResponseEntity.ok(notes));
+	        when(patientProxy.getPatientById(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(patient));
+	        when(notesProxy.getNotesByPatient(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(notes));
 
-	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
+	        RiskDTO risk = riskService.calculNiveauRisk(patientId, authenticatedUser);
 
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.DANGER, risk.getNiveauRisk());
@@ -124,10 +126,10 @@ public class RiskServiceTest {
 		    notes.add(createNote("Patient fumeur anormal taille normal poids normal"));
 		    notes.add(createNote("Présence d'anticorps"));
 
-	        when(patientProxy.getPatientById(patientId)).thenReturn(ResponseEntity.ok(patient));
-	        when(notesProxy.getNotesByPatient(patientId)).thenReturn(ResponseEntity.ok(notes));
+	        when(patientProxy.getPatientById(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(patient));
+	        when(notesProxy.getNotesByPatient(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(notes));
 
-	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
+	        RiskDTO risk = riskService.calculNiveauRisk(patientId, authenticatedUser);
 
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.APARITION_PRECOCE, risk.getNiveauRisk());
@@ -141,10 +143,10 @@ public class RiskServiceTest {
 		    notes.add(createNote("Patient fumeur et avec taux de cholesterol anormal"));
 		    notes.add(createNote("Présence d'anticorps et microalbumine élevée"));
 
-	        when(patientProxy.getPatientById(patientId)).thenReturn(ResponseEntity.ok(patient));
-	        when(notesProxy.getNotesByPatient(patientId)).thenReturn(ResponseEntity.ok(notes));
+	        when(patientProxy.getPatientById(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(patient));
+	        when(notesProxy.getNotesByPatient(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(notes));
 
-	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
+	        RiskDTO risk = riskService.calculNiveauRisk(patientId, authenticatedUser);
 
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.DANGER, risk.getNiveauRisk());
@@ -157,10 +159,10 @@ public class RiskServiceTest {
 		    notes.add(createNote("Patient fumeur anormal taille normal poids normal"));
 		    notes.add(createNote("Présence d'anticorps et vertiges"));
 
-	        when(patientProxy.getPatientById(patientId)).thenReturn(ResponseEntity.ok(patient));
-	        when(notesProxy.getNotesByPatient(patientId)).thenReturn(ResponseEntity.ok(notes));
+	        when(patientProxy.getPatientById(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(patient));
+	        when(notesProxy.getNotesByPatient(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(notes));
 
-	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
+	        RiskDTO risk = riskService.calculNiveauRisk(patientId, authenticatedUser);
 
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.APARITION_PRECOCE, risk.getNiveauRisk());
@@ -173,10 +175,10 @@ public class RiskServiceTest {
 	        patient.setDateNaissance(LocalDate.now().minusYears(40));
 	        patient.setGenre(Genre.M);
 
-	        when(patientProxy.getPatientById(patientId)).thenReturn(ResponseEntity.ok(patient));
-	        when(notesProxy.getNotesByPatient(patientId)).thenReturn(ResponseEntity.ok(new ArrayList<>())); // liste vide
+	        when(patientProxy.getPatientById(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(patient));
+	        when(notesProxy.getNotesByPatient(patientId, authenticatedUser)).thenReturn(ResponseEntity.ok(new ArrayList<>())); // liste vide
 
-	        RiskDTO risk = riskService.calculNiveauRisk(patientId);
+	        RiskDTO risk = riskService.calculNiveauRisk(patientId, authenticatedUser);
 
 	        assertNotNull(risk);
 	        assertEquals(NiveauRisk.AUCUN_RISQUE, risk.getNiveauRisk());

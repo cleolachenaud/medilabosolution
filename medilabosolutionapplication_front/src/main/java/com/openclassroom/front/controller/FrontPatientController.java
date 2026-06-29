@@ -1,5 +1,7 @@
 package com.openclassroom.front.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,18 +20,25 @@ import feign.FeignException;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/front")
+@RequestMapping("")
+/**
+ * Classe de controllerPatient pour le front
+ */
 public class FrontPatientController {
 
+	private static final Logger logger = LogManager.getLogger("FrontPatientController");
+	
    @Autowired
+   // pour FeignClient
    private final IMicroservicePatientsProxy patientProxy ;
 
    public FrontPatientController(IMicroservicePatientsProxy patientProxy){
        this.patientProxy = patientProxy;
    }
 
-   @GetMapping("/")
+   @GetMapping({"", "/"})
    public String accueilFormulaire() {
+	   logger.info("GET accueilFormulaire");
        return "accueilAppli";
    }
 
@@ -37,6 +46,7 @@ public class FrontPatientController {
    public String rechercherPatient(@RequestParam("nom") String nom,
                                   @RequestParam("prenom") String prenom,
                                   Model model, HttpSession session) {
+	   logger.info("GET rechercherPatient");
        PatientDTO patient = null;
        try {
            ResponseEntity<PatientDTO> response = patientProxy.getPatient(nom, prenom);

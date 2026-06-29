@@ -16,7 +16,10 @@ import jakarta.servlet.http.HttpSession;
 
 
 @Controller
-@RequestMapping("/front/notes")
+@RequestMapping("/notes")
+/**
+ * Classe de controller front pour les notes
+ */
 public class FrontNotesController {
 
     @Autowired

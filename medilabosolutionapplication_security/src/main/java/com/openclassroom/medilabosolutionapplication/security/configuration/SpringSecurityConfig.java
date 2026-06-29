@@ -1,5 +1,7 @@
 package com.openclassroom.medilabosolutionapplication.security.configuration;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,25 +20,31 @@ import com.openclassroom.medilabosolutionapplication.security.component.JwtConve
 @EnableMethodSecurity
 public class SpringSecurityConfig {
 
+	private static final Logger logger = LogManager.getLogger("SpringSecurityConfig");
+	
     @Autowired
     private JwtConverter jwtConverter;
     
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+    	logger.info("securityFilterChain : " + http.toString());
         http
 	        .csrf(AbstractHttpConfigurer::disable)
-	        .authorizeHttpRequests((authorize)-> authorize.anyRequest().authenticated())
+	        .authorizeHttpRequests(
+                    (authorize)-> authorize
+                    .requestMatchers("/auth/login").permitAll()
+                    .requestMatchers("/login").permitAll()
+                    .anyRequest().authenticated()
+            )
 	        .oauth2ResourceServer(
                 (oauth2)-> oauth2.jwt(
                         jwt-> jwt.jwtAuthenticationConverter(jwtConverter)
-                )
+                ) 
         	)
 	        .sessionManagement(
                 session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 	        );
-
         return http.build();
     }
     /**

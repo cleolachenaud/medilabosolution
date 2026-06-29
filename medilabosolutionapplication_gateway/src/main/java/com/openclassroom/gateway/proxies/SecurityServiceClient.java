@@ -2,18 +2,29 @@ package com.openclassroom.gateway.proxies;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
+
+import java.time.Duration;
 
 @Service
 public class SecurityServiceClient {
 	private final WebClient webClient;
 	
 	public SecurityServiceClient(WebClient.Builder builder, @Value("${security.service.url}") String securityUrl) {
-		this.webClient = builder.baseUrl(securityUrl).build();
+		//this.webClient = builder.baseUrl(securityUrl).build();
+		HttpClient httpClient = HttpClient.create()
+				.responseTimeout(Duration.ofSeconds(3));
+		this.webClient = builder
+				.baseUrl(securityUrl)
+				.clientConnector(new ReactorClientHttpConnector(httpClient))
+				.build();
+
 	}
 
 	public Mono<Boolean> isTokenValid(String header){

@@ -11,7 +11,7 @@ import com.openclassroom.common.model.RiskDTO;
 @FeignClient(name = "medilabosolutionapplication-risk", url = "${spring.cloud.openfeign.client.gateway.url}")
 public interface IMicroserviceRiskProxy {
 
-    @GetMapping(value = "/risk/patient/{id}")
+    @GetMapping(value = "/api/risk/patient/{id}")
     ResponseEntity<RiskDTO> getRiskByPatient(@PathVariable("id") Integer id);
 
 

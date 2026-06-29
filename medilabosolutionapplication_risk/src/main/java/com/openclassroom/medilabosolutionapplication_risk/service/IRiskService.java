@@ -8,6 +8,6 @@ import com.openclassroom.common.model.RiskDTO;
  */
 public interface IRiskService {
 
-	RiskDTO calculNiveauRisk(Integer patientId) throws Exception;
-	
+	RiskDTO calculNiveauRisk(Integer patientId, String authenticatedUser) throws Exception;
+
 }
