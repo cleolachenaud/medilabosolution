@@ -26,6 +26,32 @@ public class KeycloakAuthService {
         this.restTemplate = restTemplate;
     }
 
+    public KeycloakTokenResponseDTO refreshToken(String refreshToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", "medilabosolution_cli");
+        body.add("refresh_token", refreshToken);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<KeycloakTokenResponseDTO> response = restTemplate.postForEntity(
+                keycloakUrlToken,
+                request,
+                KeycloakTokenResponseDTO.class
+            );
+            return response.getBody();
+
+        } catch (HttpClientErrorException.Unauthorized e) {
+            throw new BadCredentialsException("Refresh token invalide ou expiré");
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("Erreur Keycloak refresh : " + e.getStatusCode());
+        }
+    }
+
     public KeycloakTokenResponseDTO login(String username, String password) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

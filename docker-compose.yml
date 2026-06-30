@@ -38,6 +38,9 @@ services:
             - "8082:8082"
         networks:
             - medilabosolution
+        environment:
+            # Dans Docker, le Front doit appeler la Gateway par son nom de service, pas localhost
+            SPRING_CLOUD_OPENFEIGN_CLIENT_GATEWAY_URL: http://gateway:8080
     notes:
         build: ./medilabosolutionapplication_notes
         networks:

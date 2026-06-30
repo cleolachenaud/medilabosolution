@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.openclassroom.common.model.KeycloakTokenResponseDTO;
 import com.openclassroom.common.model.LoginRequestDTO;
+import com.openclassroom.common.model.RefreshTokenRequestDTO;
 import com.openclassroom.medilabosolutionapplication.security.service.KeycloakAuthService;
 
 @RestController
@@ -36,6 +37,19 @@ public class SecurityController {
     }
     
     
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequestDTO refreshRequest) {
+    	logger.info("refreshToken");
+        try {
+            KeycloakTokenResponseDTO token = keycloakAuthService.refreshToken(refreshRequest.getRefreshToken());
+        	logger.info("refreshToken OK : " + token.getAccessToken());
+            return ResponseEntity.ok(token);
+        } catch (BadCredentialsException e) {
+        	logger.info("refreshToken UNAUTHORIZED : " + e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token invalide ou expiré");
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest) {
     	logger.info("login : " + loginRequest.toString());

@@ -56,21 +56,28 @@ public class LoginController {
         }
 		logger.info("Token obtenu : " + response.getBody().getAccessToken());
 		session.setAttribute("jwt_token", response.getBody().getAccessToken());
+		session.setAttribute("refresh_token", response.getBody().getRefreshToken());
 		
 		String token = response.getBody().getAccessToken();
+		String refreshToken = response.getBody().getRefreshToken();
 
 		Cookie jwtCookie = new Cookie("jwt_token", token);
 		jwtCookie.setHttpOnly(true);        // Empêche l'accès JS côté client
 		//jwtCookie.setSecure(true);          // En prod : cookie transmis uniquement via HTTPS
 		jwtCookie.setPath("/");             // Accessible pour toutes les routes
 		jwtCookie.setMaxAge(60 * 60);      // Durée de vie en secondes (ex 1h)
-
 		httpResponse.addCookie(jwtCookie);
+
+		Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+		refreshTokenCookie.setHttpOnly(true);
+		//refreshTokenCookie.setSecure(true); // En prod : cookie transmis uniquement via HTTPS
+		refreshTokenCookie.setPath("/");
+		refreshTokenCookie.setMaxAge(60 * 60 * 24 * 30); // 30 jours
+		httpResponse.addCookie(refreshTokenCookie);
 		
 		//httpResponse.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + response.getBody().getAccessToken());
         
 		logger.info("GoTo accueilAppli");
-		//return "redirect:/patients";
-		return "redirect:http://localhost:8080/patients";
+		return "redirect:/patients";
 	}
 }

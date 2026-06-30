@@ -28,12 +28,13 @@ public class SpringSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    	logger.info("securityFilterChain : " + http.toString());
+    	logger.info("logsecurityFilterChain : " + http.toString());
         http
 	        .csrf(AbstractHttpConfigurer::disable)
 	        .authorizeHttpRequests(
                     (authorize)-> authorize
-                    .requestMatchers("/auth/login").permitAll()
+                    .requestMatchers("/auth/login").permitAll() // TODO ca c'est moche 
+                    .requestMatchers("/auth/refresh").permitAll()
                     .requestMatchers("/login").permitAll()
                     .anyRequest().authenticated()
             )

@@ -26,105 +26,111 @@ import jakarta.servlet.http.HttpSession;
  */
 public class FrontPatientController {
 
-	private static final Logger logger = LogManager.getLogger("FrontPatientController");
-	
-   @Autowired
-   // pour FeignClient
-   private final IMicroservicePatientsProxy patientProxy ;
+    private static final Logger logger = LogManager.getLogger("FrontPatientController");
 
-   public FrontPatientController(IMicroservicePatientsProxy patientProxy){
-       this.patientProxy = patientProxy;
-   }
+    @Autowired
+    // pour FeignClient
+    private final IMicroservicePatientsProxy patientProxy ;
 
-   @GetMapping({"", "/"})
-   public String accueilFormulaire() {
-	   logger.info("GET accueilFormulaire");
-       return "accueilAppli";
-   }
+    public FrontPatientController(IMicroservicePatientsProxy patientProxy){
+        this.patientProxy = patientProxy;
+    }
 
-   @GetMapping("/recherche")
-   public String rechercherPatient(@RequestParam("nom") String nom,
-                                  @RequestParam("prenom") String prenom,
-                                  Model model, HttpSession session) {
-	   logger.info("GET rechercherPatient");
-       PatientDTO patient = null;
-       try {
-           ResponseEntity<PatientDTO> response = patientProxy.getPatient(nom, prenom);
-           patient = response.getBody();
-           session.setAttribute("patient", patient);
-       } catch (FeignException.NotFound e) {
-           patient = new PatientDTO();
-           patient.setNom(nom);
-           patient.setPrenom(prenom);
+    @GetMapping("/patients")
+    public String accueilPatients() {
+        logger.info("GET /patients → accueilAppli");
+        return "accueilAppli";
+    }
 
-           model.addAttribute("message", "Patient non trouvé");
-           model.addAttribute("showCreateForm", true);
-           model.addAttribute("patient", patient);
-           return "accueilAppli";
-       } catch (Exception e) {
-           model.addAttribute("message", "Erreur lors de la recherche : " + e.getMessage());
-           return "accueilAppli";
-       }
-       
-       model.addAttribute("patient", patient);
-       model.addAttribute("showCreateForm", false);
-       model.addAttribute("showEditForm", false); // pas en mode édition par défaut
-       return "accueilAppli";
-   }
+    @GetMapping({"", "/"})
+    public String accueilFormulaire() {
+        logger.info("GET accueilFormulaire");
+        return "accueilAppli";
+    }
 
-   @PostMapping("/patients")
-   public String creerPatient(@ModelAttribute PatientDTO patientDTO, Model model) {
-       ResponseEntity<PatientDTO> response = patientProxy.createPatient(patientDTO);
-       PatientDTO createdPatient = response.getBody();
-       model.addAttribute("patient", createdPatient);
-       model.addAttribute("message", "Patient créé avec succès");
-       model.addAttribute("showCreateForm", false);
-       model.addAttribute("showEditForm", false);
-       return "accueilAppli";
-   }
+    @GetMapping("/recherche")
+    public String rechercherPatient(@RequestParam("nom") String nom,
+                                    @RequestParam("prenom") String prenom,
+                                    Model model, HttpSession session) {
+        logger.info("GET rechercherPatient");
+        PatientDTO patient = null;
+        try {
+            ResponseEntity<PatientDTO> response = patientProxy.getPatient(nom, prenom);
+            patient = response.getBody();
+            session.setAttribute("patient", patient);
+        } catch (FeignException.NotFound e) {
+            patient = new PatientDTO();
+            patient.setNom(nom);
+            patient.setPrenom(prenom);
 
-   @GetMapping("/patients/modifier/form")
-   public String afficherFormulaireModification(@RequestParam("id") Integer id, Model model) {
-       ResponseEntity<PatientDTO> response = patientProxy.getPatientById(id);
-       if (response.getStatusCode().is2xxSuccessful()) {
-           model.addAttribute("patient", response.getBody());
-           model.addAttribute("showEditForm", true);
-           model.addAttribute("showCreateForm", false);
-       } else {
-           model.addAttribute("message", "Patient introuvable");
-           model.addAttribute("showEditForm", false);
-           model.addAttribute("showCreateForm", false);
-       }
-       return "accueilAppli";
-   }
-   @GetMapping("/patients/{id}")
-   // pour revenir sur le patient en cours après avoir été a la page des notes
-   public String afficherPatientParId(@PathVariable("id") Integer id, Model model) {
-       try {
-           ResponseEntity<PatientDTO> response = patientProxy.getPatientById(id);
-           model.addAttribute("patient", response.getBody());
-           model.addAttribute("showCreateForm", false);
-           model.addAttribute("showEditForm", false);
-           return "accueilAppli";
-       } catch (Exception e) {
-           model.addAttribute("message", "Patient introuvable");
-           return "accueilAppli";
-       }
-   }
-   @PostMapping("/patients/{id}")
-   public String modifierPatient(@PathVariable("id") Integer id, @ModelAttribute PatientDTO patientDTO, Model model) {
-       ResponseEntity<PatientDTO> response = patientProxy.updatePatient(id, patientDTO);
-       if (response.getStatusCode().is2xxSuccessful()) {
-           model.addAttribute("patient", response.getBody());
-           model.addAttribute("message", "Patient modifié avec succès");
-           model.addAttribute("showEditForm", false);
-           model.addAttribute("showCreateForm", false);
-       } else {
-           model.addAttribute("message", "Erreur lors de la modification");
-           model.addAttribute("patient", patientDTO);
-           model.addAttribute("showEditForm", true);
-           model.addAttribute("showCreateForm", false);
-       }
-       return "accueilAppli";
-   }
+            model.addAttribute("message", "Patient non trouvé");
+            model.addAttribute("showCreateForm", true);
+            model.addAttribute("patient", patient);
+            return "accueilAppli";
+        } catch (Exception e) {
+            model.addAttribute("message", "Erreur lors de la recherche : " + e.getMessage());
+            return "accueilAppli";
+        }
+
+        model.addAttribute("patient", patient);
+        model.addAttribute("showCreateForm", false);
+        model.addAttribute("showEditForm", false); // pas en mode édition par défaut
+        return "accueilAppli";
+    }
+
+    @PostMapping("/patients")
+    public String creerPatient(@ModelAttribute PatientDTO patientDTO, Model model) {
+        ResponseEntity<PatientDTO> response = patientProxy.createPatient(patientDTO);
+        PatientDTO createdPatient = response.getBody();
+        model.addAttribute("patient", createdPatient);
+        model.addAttribute("message", "Patient créé avec succès");
+        model.addAttribute("showCreateForm", false);
+        model.addAttribute("showEditForm", false);
+        return "accueilAppli";
+    }
+
+    @GetMapping("/patients/modifier/form")
+    public String afficherFormulaireModification(@RequestParam("id") Integer id, Model model) {
+        ResponseEntity<PatientDTO> response = patientProxy.getPatientById(id);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            model.addAttribute("patient", response.getBody());
+            model.addAttribute("showEditForm", true);
+            model.addAttribute("showCreateForm", false);
+        } else {
+            model.addAttribute("message", "Patient introuvable");
+            model.addAttribute("showEditForm", false);
+            model.addAttribute("showCreateForm", false);
+        }
+        return "accueilAppli";
+    }
+    @GetMapping("/patients/{id}")
+    // pour revenir sur le patient en cours après avoir été a la page des notes
+    public String afficherPatientParId(@PathVariable("id") Integer id, Model model) {
+        try {
+            ResponseEntity<PatientDTO> response = patientProxy.getPatientById(id);
+            model.addAttribute("patient", response.getBody());
+            model.addAttribute("showCreateForm", false);
+            model.addAttribute("showEditForm", false);
+            return "accueilAppli";
+        } catch (Exception e) {
+            model.addAttribute("message", "Patient introuvable");
+            return "accueilAppli";
+        }
+    }
+    @PostMapping("/patients/{id}")
+    public String modifierPatient(@PathVariable("id") Integer id, @ModelAttribute PatientDTO patientDTO, Model model) {
+        ResponseEntity<PatientDTO> response = patientProxy.updatePatient(id, patientDTO);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            model.addAttribute("patient", response.getBody());
+            model.addAttribute("message", "Patient modifié avec succès");
+            model.addAttribute("showEditForm", false);
+            model.addAttribute("showCreateForm", false);
+        } else {
+            model.addAttribute("message", "Erreur lors de la modification");
+            model.addAttribute("patient", patientDTO);
+            model.addAttribute("showEditForm", true);
+            model.addAttribute("showCreateForm", false);
+        }
+        return "accueilAppli";
+    }
 }
