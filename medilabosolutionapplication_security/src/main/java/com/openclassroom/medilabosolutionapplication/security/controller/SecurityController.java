@@ -29,7 +29,7 @@ public class SecurityController {
     
     @GetMapping("/validate")
     public ResponseEntity<Void> validateToken(@RequestHeader(value="Authorization", required=false) String header) {	
-    	logger.info("header transmis : " + header.toString());
+    	logger.info("/validate header transmis : " + header.toString());
     	if (header == null || !header.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     	}

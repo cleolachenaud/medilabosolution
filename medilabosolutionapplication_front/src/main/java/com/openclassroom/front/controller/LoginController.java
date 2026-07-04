@@ -6,7 +6,6 @@ package com.openclassroom.front.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,11 +19,9 @@ import com.openclassroom.common.model.KeycloakTokenResponseDTO;
 import com.openclassroom.common.model.LoginRequestDTO;
 import com.openclassroom.front.proxies.IMicroserviceSecurityProxy;
 
-import feign.RequestTemplate;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.Cookie;
 
 @Controller
 @RequestMapping("/login")

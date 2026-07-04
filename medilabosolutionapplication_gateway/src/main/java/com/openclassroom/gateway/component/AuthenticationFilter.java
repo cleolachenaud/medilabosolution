@@ -84,7 +84,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private Mono<Void> tryRefreshToken(ServerWebExchange exchange, GatewayFilterChain chain) {
         List<HttpCookie> refreshCookies = exchange.getRequest().getCookies().get("refresh_token");
         if (refreshCookies == null || refreshCookies.isEmpty()) {
-            logger.info("Pas de refresh_token → redirect login");
+            logger.info("Pas de refresh_token erreurpourrie → redirect login");
             return redirectToLogin(exchange);
         }
 
@@ -149,6 +149,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                 .header("X-Authenticated-User", username)
                 .build();
+
             logger.info("Return with username");
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
         }
@@ -198,10 +199,17 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
     private Mono<Void> redirectToLogin(ServerWebExchange exchange) {
         logger.info("redirectToLogin");
+        if (!exchange.getResponse().isCommitted()) {
+            exchange.getResponse().setStatusCode(HttpStatus.FOUND);
+            exchange.getResponse().getHeaders().setLocation(URI.create("/login"));
+        }
+        return exchange.getResponse().setComplete();
+        /*
         exchange.getResponse().setStatusCode(HttpStatus.FOUND);
         exchange.getResponse().getHeaders().setLocation(URI.create("/login"));
         logger.info("Exchange = " + exchange.toString());
         return exchange.getResponse().setComplete();
+        */
     }
 
     @Override

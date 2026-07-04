@@ -1,5 +1,8 @@
 package com.openclassroom.front.controller;
 
+import java.io.StringWriter;
+import java.io.PrintWriter;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +71,11 @@ public class FrontPatientController {
             model.addAttribute("patient", patient);
             return "accueilAppli";
         } catch (Exception e) {
-            model.addAttribute("message", "Erreur lors de la recherche : " + e.getMessage());
+        	StringWriter sw = new StringWriter();
+        	e.printStackTrace(new PrintWriter(sw));
+        	String exceptionAsString = sw.toString();
+            model.addAttribute("message", "Erreur lors de la recherche : " + e.getMessage() + "\n" + exceptionAsString);
+            logger.error("message Erreur lors de la recherche : " + e.getMessage() + "\n" + exceptionAsString);
             return "accueilAppli";
         }
 

@@ -24,7 +24,8 @@ public class FeignTokenInterceptor implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
         HttpSession session = request.getSession(false);
-    	logger.info("FeignTokenInterceptor");
+    	logger.info("FeignTokenInterceptor : " + template.toString());
+    	
 
         // Si la gateway a rafraîchi le token, les nouveaux tokens sont passés en headers internes
         String newAccessToken = request.getHeader("X-New-Access-Token");
@@ -37,15 +38,19 @@ public class FeignTokenInterceptor implements RequestInterceptor {
                     session.setAttribute("refresh_token", newRefreshToken);
                 }
             }
+        	logger.info("FeignTokenInterceptor get Header AUTHORIZATION");
             template.header(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken);
+        	logger.info("FeignTokenInterceptor FIN AUTHORIZATION");
             return;
         }
 
         if (session != null) {
             String token = (String) session.getAttribute("jwt_token"); // le jwt est stocké dans la session
             if (token != null) {
+            	logger.info("FeignTokenInterceptor get Header AUTHORIZATION 2");
                 template.header(HttpHeaders.AUTHORIZATION, "Bearer " + token);
             }
         }
+    	logger.info("FeignTokenInterceptor Fin");
     }
 }

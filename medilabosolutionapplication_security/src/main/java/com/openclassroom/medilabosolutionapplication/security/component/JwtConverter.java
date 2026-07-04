@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+	private static final Logger logger = LogManager.getLogger("JwtConverter");
  
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter =
             new JwtGrantedAuthoritiesConverter();
@@ -30,6 +33,7 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
+    	logger.info("Convert : " + jwt.toString());
 
         Collection<GrantedAuthority> authorities = Stream.concat(
                 jwtGrantedAuthoritiesConverter.convert(jwt).stream(),

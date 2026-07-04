@@ -1,5 +1,9 @@
 package com.openclassroom.gateway.proxies;
 
+import java.time.Duration;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,10 +18,11 @@ import com.openclassroom.common.model.RefreshTokenRequestDTO;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
-import java.time.Duration;
-
 @Service
 public class SecurityServiceClient {
+
+	private static final Logger logger = LogManager.getLogger("SecurityServiceClient");
+	
 	private final WebClient webClient;
 	
 	public SecurityServiceClient(WebClient.Builder builder, @Value("${security.service.url}") String securityUrl) {
@@ -35,10 +40,18 @@ public class SecurityServiceClient {
 			.uri("/auth/validate")
 			.header(HttpHeaders.AUTHORIZATION, header)
 			.retrieve()
-			.toBodilessEntity()
+			//.toBodilessEntity()
+			.bodyToMono(String.class)
 			.map(response -> true)
-			.onErrorResume(WebClientResponseException.Unauthorized.class, e -> Mono.just(false))
-			.onErrorResume(e -> Mono.just(false));
+			.onErrorResume(WebClientResponseException.Unauthorized.class, e -> {
+				logger.error("isTokenValid Error 1 : " + e.getMessage());
+				return Mono.just(false);
+			})
+			.onErrorResume(e -> {
+				logger.error("isTokenValid Error 2 : " + e.getMessage());
+				return Mono.just(false);
+			})
+			;
 	}
 
 	public Mono<KeycloakTokenResponseDTO> refreshToken(String refreshToken) {
@@ -48,7 +61,10 @@ public class SecurityServiceClient {
 			.bodyValue(new RefreshTokenRequestDTO(refreshToken))
 			.retrieve()
 			.bodyToMono(KeycloakTokenResponseDTO.class)
-			.onErrorResume(e -> Mono.empty());
+			.onErrorResume(e -> {
+			    logger.error("refreshToken failed : " + e.getMessage());
+			    return Mono.empty();
+			});
 	}
 }
 
