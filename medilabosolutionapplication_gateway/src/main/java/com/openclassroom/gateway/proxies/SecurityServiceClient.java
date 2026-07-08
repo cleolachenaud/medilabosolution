@@ -26,6 +26,7 @@ public class SecurityServiceClient {
 	private final WebClient webClient;
 	
 	public SecurityServiceClient(WebClient.Builder builder, @Value("${security.service.url}") String securityUrl) {
+		logger.info("SecurityServiceClient constructor");
 		HttpClient httpClient = HttpClient.create()
 				.responseTimeout(Duration.ofSeconds(3));
 		this.webClient = builder
@@ -35,6 +36,7 @@ public class SecurityServiceClient {
 	}
 
 	public Mono<Boolean> isTokenValid(String header){
+		logger.info("isTokenValid called with header: " + header);
 		return
 			webClient.get()
 			.uri("/auth/validate")
@@ -55,6 +57,7 @@ public class SecurityServiceClient {
 	}
 
 	public Mono<KeycloakTokenResponseDTO> refreshToken(String refreshToken) {
+		logger.info("refreshToken called with refreshToken: " + refreshToken);
 		return webClient.post()
 			.uri("/auth/refresh")
 			.contentType(MediaType.APPLICATION_JSON)

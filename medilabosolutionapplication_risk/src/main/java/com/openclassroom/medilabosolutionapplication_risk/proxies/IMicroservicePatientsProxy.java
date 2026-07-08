@@ -17,6 +17,5 @@ public interface IMicroservicePatientsProxy {
 
     @GetMapping(value = "/api/patients/{id}")
     ResponseEntity<PatientDTO> getPatientById(
-            @PathVariable("id") Integer id,
-            @RequestHeader("X-Authenticated-User") String authenticatedUser);
+            @PathVariable("id") Integer id);
 }

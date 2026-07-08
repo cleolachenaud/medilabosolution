@@ -21,7 +21,6 @@ import com.openclassroom.front.proxies.IMicroserviceSecurityProxy;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/login")
@@ -41,39 +40,30 @@ public class LoginController {
 	
 	@PostMapping({"", "/"})
 	public String login(@ModelAttribute LoginRequestDTO loginRequest,
-			HttpSession session,
 			RedirectAttributes redirectAttributes,
 			HttpServletResponse httpResponse) {
 		logger.info("POST loginPage : " + loginRequest.getUsername());
 		ResponseEntity<KeycloakTokenResponseDTO> response = securityClient.login(loginRequest);
-        if (response.getBody() == null) {
-    		logger.info("Aucun token");
-            redirectAttributes.addFlashAttribute("erreur", "Identifiants invalides");
-            return "login";
-        }
-		logger.info("Token obtenu : " + response.getBody().getAccessToken());
-		session.setAttribute("jwt_token", response.getBody().getAccessToken());
-		session.setAttribute("refresh_token", response.getBody().getRefreshToken());
-		
+		if (response.getBody() == null) {
+			redirectAttributes.addFlashAttribute("erreur", "Identifiants invalides");
+			return "login";
+		}
 		String token = response.getBody().getAccessToken();
 		String refreshToken = response.getBody().getRefreshToken();
 
+		// Cookie HTTP-only : navigateur le retransmet automatiquement, inaccessible au JS
 		Cookie jwtCookie = new Cookie("jwt_token", token);
-		jwtCookie.setHttpOnly(true);        // Empêche l'accès JS côté client
-		//jwtCookie.setSecure(true);          // En prod : cookie transmis uniquement via HTTPS
-		jwtCookie.setPath("/");             // Accessible pour toutes les routes
-		jwtCookie.setMaxAge(60 * 60);      // Durée de vie en secondes (ex 1h)
+		jwtCookie.setHttpOnly(true);
+		jwtCookie.setPath("/");
+		jwtCookie.setMaxAge(60 * 60); // 1h
 		httpResponse.addCookie(jwtCookie);
 
-		Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
-		refreshTokenCookie.setHttpOnly(true);
-		//refreshTokenCookie.setSecure(true); // En prod : cookie transmis uniquement via HTTPS
-		refreshTokenCookie.setPath("/");
-		refreshTokenCookie.setMaxAge(60 * 60 * 24 * 30); // 30 jours
-		httpResponse.addCookie(refreshTokenCookie);
-		
-		//httpResponse.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + response.getBody().getAccessToken());
-        
+		Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
+		refreshCookie.setHttpOnly(true);
+		refreshCookie.setPath("/");
+		refreshCookie.setMaxAge(60 * 60 * 24 * 30); // 30 jours
+		httpResponse.addCookie(refreshCookie);
+
 		logger.info("GoTo accueilAppli");
 		return "redirect:/patients";
 	}

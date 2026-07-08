@@ -19,6 +19,5 @@ public interface IMicroserviceNotesProxy {
 
     @GetMapping(value = "/api/notes/patient/{patientId}")
     ResponseEntity<List<NotesDTO>> getNotesByPatient(
-            @PathVariable("patientId") Integer patientId,
-            @RequestHeader("X-Authenticated-User") String authenticatedUser);
+            @PathVariable("patientId") Integer patientId);
 }

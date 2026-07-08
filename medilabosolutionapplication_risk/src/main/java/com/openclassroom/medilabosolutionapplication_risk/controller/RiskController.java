@@ -22,11 +22,10 @@ public class RiskController {
 
     @GetMapping("/patient/{id}")
     public ResponseEntity<RiskDTO> geRiskByPatientId(
-            @PathVariable("id") Integer id,
-            @RequestHeader("X-Authenticated-User") String authenticatedUser) {
+            @PathVariable("id") Integer id) {
         RiskDTO niveauRisk = new RiskDTO();
         try {
-            niveauRisk = riskService.calculNiveauRisk(id, authenticatedUser);
+            niveauRisk = riskService.calculNiveauRisk(id);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(niveauRisk);

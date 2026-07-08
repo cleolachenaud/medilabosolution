@@ -1,7 +1,7 @@
 package com.openclassroom.front.controller;
 
-import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,20 +34,15 @@ public class FrontPatientController {
     @Autowired
     // pour FeignClient
     private final IMicroservicePatientsProxy patientProxy ;
+    
 
     public FrontPatientController(IMicroservicePatientsProxy patientProxy){
         this.patientProxy = patientProxy;
     }
 
-    @GetMapping("/patients")
-    public String accueilPatients() {
-        logger.info("GET /patients → accueilAppli");
-        return "accueilAppli";
-    }
-
-    @GetMapping({"", "/"})
+    @GetMapping({"", "/", "/patients"})
     public String accueilFormulaire() {
-        logger.info("GET accueilFormulaire");
+        logger.info("GET /patients → accueilAppli");
         return "accueilAppli";
     }
 

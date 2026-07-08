@@ -28,12 +28,9 @@ public class SecurityController {
 
     
     @GetMapping("/validate")
-    public ResponseEntity<Void> validateToken(@RequestHeader(value="Authorization", required=false) String header) {	
+    public ResponseEntity<Boolean> validateToken(@RequestHeader(value="Authorization", required=false) String header) {	
     	logger.info("/validate header transmis : " + header.toString());
-    	if (header == null || !header.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    	}
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(true); // autorisation vérifiée par Spring Security, au travers de la configuration.
     }
     
     

@@ -32,6 +32,10 @@ services:
         build: ./medilabosolutionapplication_patient
         networks:
             - medilabosolution
+        environment:
+            SECURITY_SERVICE_URL: http://security:8087
+
+
     front:
         build: ./medilabosolutionapplication_front
         ports:
@@ -41,18 +45,24 @@ services:
         environment:
             # Dans Docker, le Front doit appeler la Gateway par son nom de service, pas localhost
             SPRING_CLOUD_OPENFEIGN_CLIENT_GATEWAY_URL: http://gateway:8080
+            SPRING_CLOUD_OPENFEIGN_CLIENT_SECURITY_URL: http://security:8087
+            #SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/medilabosolution
+            #SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/medilabosolution/protocol/openid-connect/certs
     notes:
         build: ./medilabosolutionapplication_notes
         networks:
             - medilabosolution
+        environment:
+            SECURITY_SERVICE_URL: http://security:8087
     risk:
         build: ./medilabosolutionapplication_risk
         networks:
             - medilabosolution
         environment:
+            SECURITY_SERVICE_URL: http://security:8087
             # risk appelle patient et notes directement (bypass gateway, pas de JWT requis)
-            SPRING_CLOUD_OPENFEIGN_CLIENT_PATIENT_URL: http://patient:8081
-            SPRING_CLOUD_OPENFEIGN_CLIENT_NOTES_URL: http://notes:8083
+            SPRING_CLOUD_OPENFEIGN_CLIENT_PATIENT_URL: http://gateway:8080
+            SPRING_CLOUD_OPENFEIGN_CLIENT_NOTES_URL: http://gateway:8080
     security:
         build: ./medilabosolutionapplication_security
         ports:
@@ -66,7 +76,7 @@ services:
     postgres:
         image: postgres
         volumes:
-            - postgres_data:/var/lib/postgres/data
+            - C:/Tools/BDD:/var/lib/postgres/data
         environment:
             POSTGRES_DB: keycloak
             POSTGRES_USER: keycloak

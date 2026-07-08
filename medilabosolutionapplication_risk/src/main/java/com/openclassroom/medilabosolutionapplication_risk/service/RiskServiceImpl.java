@@ -47,9 +47,9 @@ public class RiskServiceImpl implements IRiskService{
      * @param authenticatedUser header X-Authenticated-User à propager vers patient et notes
      */
 	@Override
-	public RiskDTO calculNiveauRisk(Integer patientId, String authenticatedUser) throws Exception {
-		PatientDTO patient = getPatient(patientId, authenticatedUser);
-		List<NotesDTO> notes = getNotes(patientId, authenticatedUser);
+	public RiskDTO calculNiveauRisk(Integer patientId) throws Exception {
+		PatientDTO patient = getPatient(patientId);
+		List<NotesDTO> notes = getNotes(patientId);
 		RiskDTO risk = calculRisk(patient, notes);
 		return risk;
 	}
@@ -57,8 +57,8 @@ public class RiskServiceImpl implements IRiskService{
 	/**
 	 * récupère les infos du patient
 	 */
-	private PatientDTO getPatient(Integer patientId, String authenticatedUser) throws Exception {
-		ResponseEntity<PatientDTO> patient = patientProxy.getPatientById(patientId, authenticatedUser);
+	private PatientDTO getPatient(Integer patientId) throws Exception {
+		ResponseEntity<PatientDTO> patient = patientProxy.getPatientById(patientId);
 		if(!patient.hasBody()) {
 			throw new Exception("problème lors de la récupération du patient");
 		}
@@ -69,8 +69,8 @@ public class RiskServiceImpl implements IRiskService{
 	 * récupère les notes du patient.
 	 * Dans le cas d'un patient sans notes, on retourne une liste vide.
 	 */
-	private List<NotesDTO> getNotes(Integer patientId, String authenticatedUser){
-		ResponseEntity<List<NotesDTO>> listeNotes = notesProxy.getNotesByPatient(patientId, authenticatedUser);
+	private List<NotesDTO> getNotes(Integer patientId){
+		ResponseEntity<List<NotesDTO>> listeNotes = notesProxy.getNotesByPatient(patientId);
 		if (!listeNotes.hasBody() || listeNotes.getBody() == null) {
 		    return List.of();
 		}
