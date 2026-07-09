@@ -31,7 +31,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
 
 	private static final Logger logger = LogManager.getLogger("AuthenticationFilter");
 
-    private static final List<String> PUBLIC_PATHS = List.of("/login", "/auth/login", "/auth/refresh");
+    private static final List<String> PUBLIC_PATHS = List.of("/login", "/auth/login", "/auth/refresh", "/css/style.css");
 
     @Autowired
     private SecurityServiceClient securityClientService;

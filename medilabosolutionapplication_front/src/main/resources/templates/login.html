@@ -2,12 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Login</title>
-  <link rel="stylesheet" type="text/css" href="webjars/bootstrap/4.0.0-2/css/bootstrap.min.css" />
+    <link rel="stylesheet"  type="text/css" th:href="@{/css/style.css}" />
 </head>
 <body>
 
 <div class="container">
-  <h1>Login</h1>
+  <h1>Login Medilabosolution</h1>
   <form th:action="@{/login}" th:object="${loginRequest}" method="post">
     <div>
       <input type="text" name="username" th:field="*{username}" placeholder="Nom d'utilisateur" required />

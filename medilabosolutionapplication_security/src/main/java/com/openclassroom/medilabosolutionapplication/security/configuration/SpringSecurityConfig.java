@@ -45,6 +45,10 @@ public class SpringSecurityConfig {
                     (authorize)-> authorize
                     .requestMatchers("/auth/login").permitAll() 
                     .requestMatchers("/auth/refresh").permitAll()
+                    .requestMatchers("/ressources/css/style.css").permitAll()
+                    .requestMatchers("/ressources/static/css/style.css").permitAll()
+                    .requestMatchers("/static/css/style.css").permitAll()
+                    .requestMatchers("/css/style.css").permitAll()
                     .requestMatchers("/login").permitAll()
                     .anyRequest().authenticated()
             )

@@ -22,7 +22,7 @@ services:
             SPRING_CLOUD_GATEWAY_ROUTES[2]_PREDICATES[0]: Path=/api/risk/**
             SPRING_CLOUD_GATEWAY_ROUTES[3]_ID: medilabosolutionapplication-front
             SPRING_CLOUD_GATEWAY_ROUTES[3]_URI: http://front:8082/
-            SPRING_CLOUD_GATEWAY_ROUTES[3]_PREDICATES[0]: Path=/login,/patient/**,/patients/**,/recherche,/notes/**,/risk/**,/
+            SPRING_CLOUD_GATEWAY_ROUTES[3]_PREDICATES[0]: Path=/login,/patient/**,/patients/**,/recherche,/notes/**,/risk/**,/,/css/**
             SPRING_CLOUD_GATEWAY_ROUTES[4]_ID: medilabosolutionapplication-security
             SPRING_CLOUD_GATEWAY_ROUTES[4]_URI: http://security:8087/
             SPRING_CLOUD_GATEWAY_ROUTES[4]_PREDICATES[0]: Path=/auth/**

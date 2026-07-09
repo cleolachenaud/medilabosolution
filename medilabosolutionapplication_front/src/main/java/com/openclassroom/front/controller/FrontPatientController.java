@@ -96,6 +96,7 @@ public class FrontPatientController {
         ResponseEntity<PatientDTO> response = patientProxy.getPatientById(id);
         if (response.getStatusCode().is2xxSuccessful()) {
             model.addAttribute("patient", response.getBody());
+            logger.info("Patient.dateNaissance : " + response.getBody().getDateNaissance());
             model.addAttribute("showEditForm", true);
             model.addAttribute("showCreateForm", false);
         } else {
