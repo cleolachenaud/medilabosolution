@@ -3,7 +3,6 @@ package com.openclassroom.medilabosolutionapplication_risk.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +28,7 @@ public class RiskController {
         try {
             niveauRisk = riskService.calculNiveauRisk(id);
         } catch (FeignException.NotFound e) {
+        	// gère uniquement le notFound du patient. 
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             e.printStackTrace();

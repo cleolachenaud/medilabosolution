@@ -41,7 +41,7 @@
 		 <dependency>
             <groupId>com.openclassroom</groupId>
             <artifactId>common</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         
            <dependency> 
@@ -55,6 +55,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.14.1</version>
 				<configuration>
 					<annotationProcessorPaths>
 						<path>
@@ -79,18 +80,14 @@
 						</exclude>
 					</excludes>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
-	        <plugin>
-	            <groupId>org.springframework.boot</groupId>
-	            <artifactId>spring-boot-maven-plugin</artifactId>
-	            <executions>
-	                <execution>
-	                    <goals>
-	                        <goal>repackage</goal>
-	                    </goals>
-	                </execution>
-	            </executions>
-	        </plugin>
 		</plugins>
 	</build>
 

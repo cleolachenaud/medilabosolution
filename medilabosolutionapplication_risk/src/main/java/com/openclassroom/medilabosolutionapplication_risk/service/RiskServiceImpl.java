@@ -20,6 +20,8 @@ import com.openclassroom.common.util.NiveauRisk;
 import com.openclassroom.medilabosolutionapplication_risk.proxies.IMicroserviceNotesProxy;
 import com.openclassroom.medilabosolutionapplication_risk.proxies.IMicroservicePatientsProxy;
 
+import feign.FeignException;
+
 @Service
 public class RiskServiceImpl implements IRiskService{
 	
@@ -49,7 +51,12 @@ public class RiskServiceImpl implements IRiskService{
 	@Override
 	public RiskDTO calculNiveauRisk(Integer patientId) throws Exception {
 		PatientDTO patient = getPatient(patientId);
-		List<NotesDTO> notes = getNotes(patientId);
+		List<NotesDTO> notes;
+		try {
+			notes = getNotes(patientId);
+		}catch(FeignException.NotFound e) {
+			notes = List.of();
+		}
 		RiskDTO risk = calculRisk(patient, notes);
 		return risk;
 	}
