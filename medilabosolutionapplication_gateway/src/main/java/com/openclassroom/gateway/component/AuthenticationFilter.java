@@ -50,9 +50,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader != null && !authHeader.isEmpty()) {
             logger.info("private path : token depuis header Authorization");
-            //if (!isTokenValid(authHeader)) {
-            //	logger.error("TOKEN INVALIDE header !");
-            //}
             // Injecter X-Authenticated-User pour InternalAuthFilter
             String username = extractUsernameFromJwt(authHeader.replace("Bearer ", ""));
             logger.info("Token " + authHeader);
@@ -68,9 +65,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         if (cookies != null && !cookies.isEmpty()) {
             String token = cookies.get(0).getValue();
             logger.info("private path : token depuis cookie jwt_token");
-            //if (!isTokenValid(token)) {
-            //	logger.error("TOKEN INVALIDE (cookies) !");
-            //}
             String username = extractUsernameFromJwt(token);
             // Injecter Authorization + X-Authenticated-User pour les services en aval
             ServerHttpRequest mutated = exchange.getRequest().mutate()
@@ -144,20 +138,6 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         return chain.filter(exchange.mutate().request(requestBuilder.build()).build());
     }
 
-    // Continue la requête avec le token fourni (déjà validé).
-    private Mono<Void> continueWithToken(ServerWebExchange exchange, GatewayFilterChain chain, String token) {
-        String username = extractUsernameFromJwt(token);
-        if (username != null) {
-            ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                .header("X-Authenticated-User", username)
-                .build();
-
-            logger.info("Return with username");
-            return chain.filter(exchange.mutate().request(mutatedRequest).build());
-        }
-        logger.info("Return without username");
-        return chain.filter(exchange);
-    }
 
     // Décode le payload du JWT (base64url) et extrait preferred_username ou sub.
     // La signature a déjà été vérifiée par le service security.

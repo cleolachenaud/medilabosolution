@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.openclassroom.common.model.RiskDTO;
 import com.openclassroom.medilabosolutionapplication_risk.service.IRiskService;
 
+import feign.FeignException;
+
 
 @RestController
 @RequestMapping("/api/risk")
@@ -26,9 +28,11 @@ public class RiskController {
         RiskDTO niveauRisk = new RiskDTO();
         try {
             niveauRisk = riskService.calculNiveauRisk(id);
+        } catch (FeignException.NotFound e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(niveauRisk);
+            return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(niveauRisk);
     }

@@ -15,14 +15,20 @@
 
 - **Les fichiers de configurations** 
 - Chaque microservice dispose de son application.properties si besoin pour adapter selon son environnement si nécessaire  
-Il est situé ici src/main/resources/application.properties
-	
+Il est situé ici src/main/resources/application.properties 
+ 
+- **tests fonctionnels**  
+  - Des tests sont disponibles sur Bruno. 
+  - Au lancement, attention les données du patient sont dépendante de la base de tests. 
+  - Pour que cela fonctionne correctement il faudra enregistrer un patient en base, et modifier les variables d'environnement qui concernent "mou bouillon" (patient 7)  
+  	
 - **Installation et build**  
   - Cloner le repository git : git clone {URL du projet}
   - Compiler avec Maven (avec les tests unitaires) : mvn clean install
   - Construire et démarrer les images Docker : docker-compose up --build -d
   - Se connecter à l'application : http://localhost:8080
   - Arrêter les images Docker : docker-compose down
+  - si besoin un realmeExport a la racine du projet pour importer directement le realme Keycloak. Cependant la création du User sera malgré tout indispensable. 
 
 ## Schémas de base de données MYSQL pour la base Patient
 ```SQL
@@ -105,6 +111,7 @@ L’application est conçue suivant une architecture microservices, où chaque s
 - **Module FrontEnd :**  affiche les informations et permet les interactions utilisateur (via FeignClient).  
 
 Chaque microservice, ainsi que la passerelle API et le composant Security, sont conteneurisés avec Docker.
+Pour aller plus loin des schémas sont disponibles dans le dossier SchemasArchitecture à la racine du projet. 
 ``` 
 +----------------+       +-------------------+       +------------------+  
 |                |       |                   |       |                  |  
@@ -121,3 +128,50 @@ Chaque microservice, ainsi que la passerelle API et le composant Security, sont 
 | (BDD SQL 3NF)  |  | (BDD NoSQL)      |  | (Pas de BDD) |  | (DTO, constantes)|
 +----------------+  +------------------+  +--------------+  +------------------+
 ```
+## Green Code
+- **Introduction**  
+Le green code est une pratique informatique visant à minimiser l’empreinte écologique d’une application, notamment via l’optimisation de son code source. Aujourd’hui, le secteur numérique représente environ 4,4 % de l’empreinte carbone de la France, et ce chiffre pourrait atteindre jusqu’à 45 % d’ici 2050. Cette croissance s’explique notamment par l’augmentation continue du volume de données échangées, la multiplication des data centers, ainsi que par l’utilisation toujours plus fréquente et banalisée de l’intelligence artificielle. 
+ 
+Dans ce contexte où il devient vital de limiter notre impact environnemental, le green code propose une nouvelle façon de développer : gérer plus efficacement l’infrastructure matérielle, repenser la rédaction du code source, et améliorer l’efficacité énergétique des applications.
+
+- **Comment mettre en place le Green Code**
+
+  - **Éviter le code inutile**  
+    - Supprimer les blocs de code inutilisés ou commentés.  
+    - Mutualiser les fonctions répétitives.  
+    - Éviter les dépendances lourdes pour des besoins simples.  
+    - Repenser les algorithmes.  
+
+  - **Choisir une solution algorithmique adaptée**  
+    - Choisir des technologies adéquates permet de réduire drastiquement le temps de calcul et la consommation énergétique.  
+
+  - **Limiter les requêtes**  
+    - Réduire la fréquence des appels aux API.  
+    - Mettre en cache les résultats pour éviter des requêtes répétées.  
+    - Charger les données à la demande (chargement différé) afin d’éviter des traitements inutiles.  
+
+  - **Alléger les interfaces utilisateurs**  
+    - Utiliser des images optimisées pour réduire la taille des chargements.  
+    - Privilégier les polices systèmes, moins gourmandes en ressources.  
+    - Réduire l’usage de JavaScript aux fonctionnalités indispensables.  
+    - Proposer un CSS allégé avec des composants réutilisables pour limiter la redondance.  
+
+  - **Choisir des hébergeurs et infrastructures écoresponsables**  
+    - Privilégier des centres de données utilisant des énergies renouvelables ou ayant une bonne efficacité énergétique.  
+
+  - **Utiliser des outils pour mesurer l’empreinte environnementale**  
+    - *EcoIndex* : analyse la performance écologique des pages web.  
+    - *Scaphandre* : mesure la consommation d’énergie des serveurs.  
+    - *GreenFrame* : simule l’empreinte carbone d’une application.
+
+- **Et concrètement dans MédilaboSolution, ça donne quoi**
+
+  **Les actions déjà mises en place :**  
+  - Utilisation d'un CSS minimal.  
+  - Utilisation d'un package "common" permettant la centralisation de certaines classes "utils" (enum, dto).  
+  - Découpage des attentes fonctionnelles en microservices (le MicroService RISK appelle le microservice Patient et Notes pour récupérer ce dont il a besoin).  
+
+  **Les actions à mettre en place :**  
+  - Mettre en place SONARQUBE, pour améliorer les performances techniques de l'application (refacto, TU) mais également l'empreinte environnementale en installant le plugin dédié.  
+  - Revoir la sécurité : actuellement chaque microservice dispose d'un "authentificationFilter" pour vérifier le token valide et le header. Tout regrouper dans le module sécurité éviterait la duplication du code.  
+  - Mise en cache de certaines informations pour ne pas avoir à réinterroger les services, en ayant une approche rationnelle (ne garder que les informations nécessaires, notamment pour l'appel du microservice Risk). 
