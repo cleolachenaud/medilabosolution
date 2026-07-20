@@ -40,7 +40,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
         logger.info("filter : " + path);
-
+// si la page est une page publique, on propage la requête. 
         if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
             logger.info("public path : ALLOWED");
             return chain.filter(exchange);
