@@ -77,15 +77,5 @@ public class PatientController {
         Patient created = patientService.createPatient(patientService.patientDTOToPatient(patientDTO));
         return ResponseEntity.status(201).body(patientService.patientToPatientDTO(created));
     }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePatient(@PathVariable Integer id) {
-        try {
-            patientService.deletePatient(id);
-            return ResponseEntity.noContent().build(); // 204 No Content si suppression OK
-        } catch (IllegalArgumentException e) {
-            // Si patient non trouvé ou id null
-            return ResponseEntity.notFound().build();
-        }
-    }
+
 }

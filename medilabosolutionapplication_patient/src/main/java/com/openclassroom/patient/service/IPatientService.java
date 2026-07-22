@@ -14,7 +14,6 @@ public interface IPatientService {
     Optional<Patient> getPatientByName(String nom, String prenom);
     Optional<Patient> getPatientById(Integer id);
     Patient updatePatient(Patient patient);
-    void deletePatient(Integer patientId);
 
     public Patient patientDTOToPatient(PatientDTO patientDTO);
     public PatientDTO patientToPatientDTO(Patient patient);

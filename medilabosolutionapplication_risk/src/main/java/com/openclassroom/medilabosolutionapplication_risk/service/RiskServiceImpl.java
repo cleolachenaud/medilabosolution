@@ -26,7 +26,7 @@ import feign.FeignException;
 public class RiskServiceImpl implements IRiskService{
 	
 	// liste des termes déclencheurs
-	private Set<String> declencheursPossibles = Set.of("hemoglobine a1c", "microalbumine", "taille", "poids", "fumeur", "fumeuse", "anormal", "cholesterol", "vertiges", "rechute", "reaction", "anticorps");
+	private Set<String> declencheursPossibles = Set.of("hémoglobine a1c", "microalbumine", "taille", "poids", "fumeur", "fumeuse", "anormal", "cholesterol", "vertiges", "rechute", "réaction", "anticorps");
 	private Set<String> declencheursPossiblesNormalises = new HashSet<String>();
 
     @Autowired
@@ -148,21 +148,20 @@ public class RiskServiceImpl implements IRiskService{
  */
 	private int compterNombreDeclencheurUnique(List<NotesDTO> notes) {
 		// j'analyse les notes et je compte le nombre de déclencheurs présents
-		Set<String> declencheursUniques = new HashSet<>(); 
+		int nombreDeclencheurs = 0; 
 	
 		for (NotesDTO note : notes) {
 			String contenuNormalise = normalizeText(note.getContenu().toLowerCase());
 			for (String declencheur : declencheursPossiblesNormalises) {
 	            if (contenuNormalise.contains(declencheur)) {
-	                declencheursUniques.add(declencheur);
+	            	nombreDeclencheurs++;
 	            }
 	        }
-			if (declencheursUniques.size()>= ConstantesSeuilRisk.SEUIL_MAX_DECLENCHEURS) {
+			if (nombreDeclencheurs >= ConstantesSeuilRisk.SEUIL_MAX_DECLENCHEURS) {
 				break; // Risque maximum, parcours des notes suivantes inutiles 
 			}
 	    }	
-		int nombreDeclencheursUniques = declencheursUniques.size();
-		return nombreDeclencheursUniques;
+		return nombreDeclencheurs;
 	}
 	
 	// méthodes Utiles // 

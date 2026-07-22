@@ -93,17 +93,6 @@ public class PatientServiceImpl implements IPatientService{
 	    return patientRepository.save(existingPatient);
 	}
 	
-	@Override
-	public void deletePatient(Integer patientId) {
-	    if (patientId == null) {
-	        throw new IllegalArgumentException(MessageErreur.PATIENT_NULL);
-	    }
-	    Patient patient = patientRepository.findById(patientId)
-	        .orElseThrow(() -> new IllegalArgumentException(
-	            MessageErreur.PATIENT_EXISTEPAS + patientId));
-	    
-	    patientRepository.delete(patient);
-	}
 
 
 	private void verificationTelephone(String telephone) {

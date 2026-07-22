@@ -1,0 +1,1828 @@
+opencollection: 1.0.0
+info:
+  name: openclassroom
+config:
+  environments:
+    - name: production
+      variables:
+        - name: portGateway
+          value: '8080'
+        - name: portPatient
+          value: '8080'
+    - name: test
+      variables:
+        - name: portGateway
+          value: '8082'
+        - name: portPatient
+          value: '8083'
+items:
+  - info:
+      name: medilabosolution
+      type: folder
+      seq: 2
+    request:
+      auth: inherit
+    items:
+      - info:
+          name: Tests (asserts)
+          type: folder
+          seq: 2
+        request:
+          auth: inherit
+          variables:
+            - name: urlGateway
+              value: http://localhost:8080/
+        items:
+          - info:
+              name: Front
+              type: folder
+              seq: 2
+            request:
+              auth: inherit
+            items:
+              - info:
+                  name: FRONT - avec token
+                  type: http
+                  seq: 2
+                http:
+                  method: GET
+                  url: http://localhost:8080/
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <title>Accueil</title>
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>MediLaboSolution Patient</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: FRONT - sans token
+                  type: http
+                  seq: 1
+                http:
+                  method: GET
+                  url: http://localhost:8080/
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                    - expression: res.body
+                      operator: contains
+                      value: <title>Login</title>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+          - info:
+              name: Security
+              type: folder
+              seq: 1
+            request:
+              auth: inherit
+            items:
+              - info:
+                  name: SECURITY - getJwt Unauthorized
+                  type: http
+                  seq: 1
+                http:
+                  method: POST
+                  url: http://localhost:8087/auth/login
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "username": "unknown",
+                        "password": "user"
+                      }
+                  auth: inherit
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '401'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: SECURITY - getJwt
+                  type: http
+                  seq: 2
+                http:
+                  method: POST
+                  url: http://localhost:8087/auth/login
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "username": "user",
+                        "password": "user"
+                      }
+                  auth: inherit
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                  actions:
+                    - type: set-variable
+                      phase: after-response
+                      selector:
+                        expression: res.body.access_token
+                        method: jsonq
+                      variable:
+                        name: tokenPourTest
+                        scope: runtime
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+          - info:
+              name: Patient TestNone
+              type: folder
+              seq: 3
+            request:
+              auth: inherit
+              variables:
+                - name: nomPatient
+                  value: TestNone
+                - name: prenomPatient
+                  value: Test
+            items:
+              - info:
+                  name: NOTES - avec token
+                  type: http
+                  seq: 6
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes/patient/{{id}}
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.headers['content-type']
+                      operator: eq
+                      value: application/json
+                    - expression: res.body
+                      operator: isArray
+                      value: ''
+                    - expression: res.body
+                      operator: isNotEmpty
+                      value: ''
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - inexistant avec token
+                  type: http
+                  seq: 2
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom=inconnu&prenom=inconnu
+                  params:
+                    - name: nom
+                      value: inconnu
+                      type: query
+                    - name: prenom
+                      value: inconnu
+                      type: query
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '404'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: NOTES - inexistant avec token
+                  type: http
+                  seq: 7
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes/patient/999
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '204'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - avec token
+                  type: http
+                  seq: 3
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom={{nomPatient}}&prenom={{prenomPatient}}
+                  params:
+                    - name: nom
+                      value: '{{nomPatient}}'
+                      type: query
+                    - name: prenom
+                      value: '{{prenomPatient}}'
+                      type: query
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body.prenom
+                      operator: eq
+                      value: Test
+                    - expression: res.body.genre
+                      operator: eq
+                      value: F
+                  actions:
+                    - type: set-variable
+                      phase: after-response
+                      selector:
+                        expression: res.body.id
+                        method: jsonq
+                      variable:
+                        name: id
+                        scope: runtime
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: NOTES - sans token
+                  type: http
+                  seq: 5
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes?nom=mou&prenom=bouillon
+                  params:
+                    - name: nom
+                      value: mou
+                      type: query
+                    - name: prenom
+                      value: bouillon
+                      type: query
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - avec token
+                  type: http
+                  seq: 9
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/{{id}}
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.headers['content-type']
+                      operator: eq
+                      value: application/json
+                    - expression: res.body.niveauRisk
+                      operator: eq
+                      value: AUCUN_RISQUE
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - inexistant avec token
+                  type: http
+                  seq: 10
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/999
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '404'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - modification
+                  type: http
+                  seq: 4
+                http:
+                  method: PUT
+                  url: http://localhost:8080/api/patients/{{id}}
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "id": 19,
+                        "nom": "TestNone",
+                        "prenom": "Test",
+                        "dateNaissance": "1966-12-31",
+                        "genre": "F",
+                        "adresse": "1 TotoSide St",
+                        "telephone": "1002223333"
+                      }
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body.prenom
+                      operator: eq
+                      value: Test
+                    - expression: res.body.genre
+                      operator: eq
+                      value: F
+                    - expression: res.body.adresse
+                      operator: eq
+                      value: 1 TotoSide St
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - sans token
+                  type: http
+                  seq: 1
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom={{nomPatient}}&prenom={{prenomPatient}}
+                  params:
+                    - name: nom
+                      value: '{{nomPatient}}'
+                      type: query
+                    - name: prenom
+                      value: '{{prenomPatient}}'
+                      type: query
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - sans token
+                  type: http
+                  seq: 8
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/7
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+          - info:
+              name: Patient TestBorderline
+              type: folder
+              seq: 4
+            request:
+              auth: inherit
+              variables:
+                - name: nomPatient
+                  value: TestBorderline
+                - name: prenomPatient
+                  value: Test
+            items:
+              - info:
+                  name: NOTES - sans token
+                  type: http
+                  seq: 5
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes?nom=mou&prenom=bouillon
+                  params:
+                    - name: nom
+                      value: mou
+                      type: query
+                    - name: prenom
+                      value: bouillon
+                      type: query
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: NOTES - avec token
+                  type: http
+                  seq: 6
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes/patient/{{id}}
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.headers['content-type']
+                      operator: eq
+                      value: application/json
+                    - expression: res.body
+                      operator: isArray
+                      value: ''
+                    - expression: res.body
+                      operator: isNotEmpty
+                      value: ''
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: NOTES - inexistant avec token
+                  type: http
+                  seq: 7
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes/patient/999
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '204'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - inexistant avec token
+                  type: http
+                  seq: 10
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/999
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '404'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - inexistant avec token
+                  type: http
+                  seq: 2
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom=inconnu&prenom=inconnu
+                  params:
+                    - name: nom
+                      value: inconnu
+                      type: query
+                    - name: prenom
+                      value: inconnu
+                      type: query
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '404'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - sans token
+                  type: http
+                  seq: 1
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom={{nomPatient}}&prenom={{prenomPatient}}
+                  params:
+                    - name: nom
+                      value: '{{nomPatient}}'
+                      type: query
+                    - name: prenom
+                      value: '{{prenomPatient}}'
+                      type: query
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - avec token
+                  type: http
+                  seq: 3
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom={{nomPatient}}&prenom={{prenomPatient}}
+                  params:
+                    - name: nom
+                      value: '{{nomPatient}}'
+                      type: query
+                    - name: prenom
+                      value: '{{prenomPatient}}'
+                      type: query
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body.prenom
+                      operator: eq
+                      value: Test
+                    - expression: res.body.genre
+                      operator: eq
+                      value: M
+                  actions:
+                    - type: set-variable
+                      phase: after-response
+                      selector:
+                        expression: res.body.id
+                        method: jsonq
+                      variable:
+                        name: id
+                        scope: runtime
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - modification
+                  type: http
+                  seq: 4
+                http:
+                  method: PUT
+                  url: http://localhost:8080/api/patients/{{id}}
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "id": 20,
+                        "nom": "TestBorderline",
+                        "prenom": "Test",
+                        "dateNaissance": "1945-06-24",
+                        "genre": "M",
+                        "adresse": "2 low St",
+                        "telephone": "2003334444"
+                      }
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body.prenom
+                      operator: eq
+                      value: Test
+                    - expression: res.body.genre
+                      operator: eq
+                      value: M
+                    - expression: res.body.adresse
+                      operator: eq
+                      value: 2 low St
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - avec token
+                  type: http
+                  seq: 9
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/{{id}}
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.headers['content-type']
+                      operator: eq
+                      value: application/json
+                    - expression: res.body.niveauRisk
+                      operator: eq
+                      value: RISQUE_LIMITE
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - sans token
+                  type: http
+                  seq: 8
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/7
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+          - info:
+              name: Patient TestInDanger
+              type: folder
+              seq: 5
+            request:
+              headers:
+                - name: nomPatient
+                  value: TestInDanger
+                - name: prenomPatient
+                  value: Test
+              auth: inherit
+              variables:
+                - name: nomPatient
+                  value: TestInDanger
+                - name: prenomPatient
+                  value: Test
+            items:
+              - info:
+                  name: NOTES - avec token
+                  type: http
+                  seq: 6
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes/patient/{{id}}
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.headers['content-type']
+                      operator: eq
+                      value: application/json
+                    - expression: res.body
+                      operator: isArray
+                      value: ''
+                    - expression: res.body
+                      operator: isNotEmpty
+                      value: ''
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - avec token
+                  type: http
+                  seq: 9
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/{{id}}
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.headers['content-type']
+                      operator: eq
+                      value: application/json
+                    - expression: res.body.niveauRisk
+                      operator: eq
+                      value: DANGER
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - sans token
+                  type: http
+                  seq: 1
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom={{nomPatient}}&prenom={{prenomPatient}}
+                  params:
+                    - name: nom
+                      value: '{{nomPatient}}'
+                      type: query
+                    - name: prenom
+                      value: '{{prenomPatient}}'
+                      type: query
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - inexistant avec token
+                  type: http
+                  seq: 10
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/999
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '404'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: NOTES - inexistant avec token
+                  type: http
+                  seq: 7
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes/patient/999
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '204'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - avec token
+                  type: http
+                  seq: 3
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom={{nomPatient}}&prenom={{prenomPatient}}
+                  params:
+                    - name: nom
+                      value: '{{nomPatient}}'
+                      type: query
+                    - name: prenom
+                      value: '{{prenomPatient}}'
+                      type: query
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body.prenom
+                      operator: eq
+                      value: Test
+                    - expression: res.body.genre
+                      operator: eq
+                      value: M
+                  actions:
+                    - type: set-variable
+                      phase: after-response
+                      selector:
+                        expression: res.body.id
+                        method: jsonq
+                      variable:
+                        name: id
+                        scope: runtime
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - inexistant avec token
+                  type: http
+                  seq: 2
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom=inconnu&prenom=inconnu
+                  params:
+                    - name: nom
+                      value: inconnu
+                      type: query
+                    - name: prenom
+                      value: inconnu
+                      type: query
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '404'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - modification
+                  type: http
+                  seq: 4
+                http:
+                  method: PUT
+                  url: http://localhost:8080/api/patients/{{id}}
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "id": 21,
+                        "nom": "TestInDanger",
+                        "prenom": "Test",
+                        "dateNaissance": "2004-06-18",
+                        "genre": "M",
+                        "adresse": "3 Street Road",
+                        "telephone": "3004445555"
+                      }
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body.prenom
+                      operator: eq
+                      value: Test
+                    - expression: res.body.genre
+                      operator: eq
+                      value: M
+                    - expression: res.body.adresse
+                      operator: eq
+                      value: 3 Street Road
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - sans token
+                  type: http
+                  seq: 8
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/7
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: NOTES - sans token
+                  type: http
+                  seq: 5
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes?nom=mou&prenom=bouillon
+                  params:
+                    - name: nom
+                      value: mou
+                      type: query
+                    - name: prenom
+                      value: bouillon
+                      type: query
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+          - info:
+              name: Patient TestEarlyOnset
+              type: folder
+              seq: 6
+            request:
+              headers:
+                - name: nomPatient
+                  value: TestEarlyOnset
+                - name: prenomPatient
+                  value: Test
+              auth: inherit
+              variables:
+                - name: nomPatient
+                  value: TestEarlyOnset
+                - name: prenomPatient
+                  value: Test
+            items:
+              - info:
+                  name: NOTES - avec token
+                  type: http
+                  seq: 6
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes/patient/{{id}}
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.headers['content-type']
+                      operator: eq
+                      value: application/json
+                    - expression: res.body
+                      operator: isArray
+                      value: ''
+                    - expression: res.body
+                      operator: isNotEmpty
+                      value: ''
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - inexistant avec token
+                  type: http
+                  seq: 2
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom=inconnu&prenom=inconnu
+                  params:
+                    - name: nom
+                      value: inconnu
+                      type: query
+                    - name: prenom
+                      value: inconnu
+                      type: query
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '404'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: NOTES - inexistant avec token
+                  type: http
+                  seq: 7
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes/patient/999
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '204'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - sans token
+                  type: http
+                  seq: 1
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom={{nomPatient}}&prenom={{prenomPatient}}
+                  params:
+                    - name: nom
+                      value: '{{nomPatient}}'
+                      type: query
+                    - name: prenom
+                      value: '{{prenomPatient}}'
+                      type: query
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - avec token
+                  type: http
+                  seq: 9
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/{{id}}
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.headers['content-type']
+                      operator: eq
+                      value: application/json
+                    - expression: res.body.niveauRisk
+                      operator: eq
+                      value: APARITION_PRECOCE
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - inexistant avec token
+                  type: http
+                  seq: 10
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/999
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '404'
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - avec token
+                  type: http
+                  seq: 3
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/patients?nom={{nomPatient}}&prenom={{prenomPatient}}
+                  params:
+                    - name: nom
+                      value: '{{nomPatient}}'
+                      type: query
+                    - name: prenom
+                      value: '{{prenomPatient}}'
+                      type: query
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body.prenom
+                      operator: eq
+                      value: Test
+                    - expression: res.body.genre
+                      operator: eq
+                      value: F
+                  actions:
+                    - type: set-variable
+                      phase: after-response
+                      selector:
+                        expression: res.body.id
+                        method: jsonq
+                      variable:
+                        name: id
+                        scope: runtime
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: RISK - sans token
+                  type: http
+                  seq: 8
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/risk/patient/7
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: NOTES - sans token
+                  type: http
+                  seq: 5
+                http:
+                  method: GET
+                  url: http://localhost:8080/api/notes?nom=mou&prenom=bouillon
+                  params:
+                    - name: nom
+                      value: mou
+                      type: query
+                    - name: prenom
+                      value: bouillon
+                      type: query
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body
+                      operator: contains
+                      value: <h1>Login Medilabosolution</h1>
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+              - info:
+                  name: PATIENT - modification
+                  type: http
+                  seq: 4
+                http:
+                  method: PUT
+                  url: http://localhost:8080/api/patients/{{id}}
+                  body:
+                    type: json
+                    data: |-
+                      {
+                        "id": 4,
+                        "nom": "TestEarlyOnset",
+                        "prenom": "Test",
+                        "dateNaissance": "2002-06-28",
+                        "genre": "F",
+                        "adresse": "4 Valley DrPepper",
+                        "telephone": "4005556666"
+                      }
+                  auth:
+                    type: bearer
+                    token: '{{tokenPourTest}}'
+                runtime:
+                  assertions:
+                    - expression: res.status
+                      operator: eq
+                      value: '200'
+                    - expression: res.body.prenom
+                      operator: eq
+                      value: Test
+                    - expression: res.body.genre
+                      operator: eq
+                      value: F
+                    - expression: res.body.adresse
+                      operator: eq
+                      value: 4 Valley DrPepper
+                settings:
+                  encodeUrl: true
+                  timeout: 0
+                  followRedirects: true
+                  maxRedirects: 5
+      - info:
+          name: initialisation des données
+          type: folder
+          seq: 1
+        request:
+          auth: inherit
+        items:
+          - info:
+              name: PATIENT - creation patient TestNone
+              type: http
+              seq: 2
+            http:
+              method: POST
+              url: http://localhost:8080/api/patients/
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": 1,
+                    "nom": "TestNone",
+                    "prenom": "Test",
+                    "dateNaissance": "1966-12-31",
+                    "genre": "F",
+                    "adresse": "1 Brookside St",
+                    "telephone": "1002223333"
+                  }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+              actions:
+                - type: set-variable
+                  phase: after-response
+                  selector:
+                    expression: res.body.id
+                    method: jsonq
+                  variable:
+                    name: idTestNone
+                    scope: runtime
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: SECURITY - getJwt copy
+              type: http
+              seq: 1
+            http:
+              method: POST
+              url: http://localhost:8087/auth/login
+              body:
+                type: json
+                data: |-
+                  {
+                    "username": "user",
+                    "password": "user"
+                  }
+              auth: inherit
+            runtime:
+              assertions:
+                - expression: res.status
+                  operator: eq
+                  value: '200'
+              actions:
+                - type: set-variable
+                  phase: after-response
+                  selector:
+                    expression: res.body.access_token
+                    method: jsonq
+                  variable:
+                    name: tokenInit
+                    scope: runtime
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: PATIENT - creation patient TestBorderline
+              type: http
+              seq: 3
+            http:
+              method: POST
+              url: http://localhost:8080/api/patients/
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": 2,
+                    "nom": "TestBorderline",
+                    "prenom": "Test",
+                    "dateNaissance": "1945-06-24",
+                    "genre": "M",
+                    "adresse": "2 High St",
+                    "telephone": "2003334444"
+                  }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+              actions:
+                - type: set-variable
+                  phase: after-response
+                  selector:
+                    expression: res.body.id
+                    method: jsonq
+                  variable:
+                    name: idTestBorderline
+                    scope: runtime
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: PATIENT - creation patient TestInDanger
+              type: http
+              seq: 4
+            http:
+              method: POST
+              url: http://localhost:8080/api/patients/
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": 3,
+                    "nom": "TestInDanger",
+                    "prenom": "Test",
+                    "dateNaissance": "2004-06-18",
+                    "genre": "M",
+                    "adresse": "3 Club Road",
+                    "telephone": "3004445555"
+                  }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+              actions:
+                - type: set-variable
+                  phase: after-response
+                  selector:
+                    expression: res.body.id
+                    method: jsonq
+                  variable:
+                    name: idTestInDanger
+                    scope: runtime
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: PATIENT - creation patient TestEarlyOnset
+              type: http
+              seq: 5
+            http:
+              method: POST
+              url: http://localhost:8080/api/patients/
+              body:
+                type: json
+                data: |-
+                  {
+                    "id": 4,
+                    "nom": "TestEarlyOnset",
+                    "prenom": "Test",
+                    "dateNaissance": "2002-06-28",
+                    "genre": "F",
+                    "adresse": "4 Valley Dr",
+                    "telephone": "4005556666"
+                  }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+              actions:
+                - type: set-variable
+                  phase: after-response
+                  selector:
+                    expression: res.body.id
+                    method: jsonq
+                  variable:
+                    name: idTestEarlyOnset
+                    scope: runtime
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: NOTES - creation notes TestNone
+              type: http
+              seq: 6
+            http:
+              method: POST
+              url: http://localhost:8080/api/notes/patient/{{idTestNone}}
+              body:
+                type: json
+                data: |-
+                  {
+                      "contenu": "Le patient déclare qu'il se sent très bien en poids égal ou inférieur au poids recommandé",
+                      "date": "2026-07-07"
+                    }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+                - name: idTestNone
+                  value: '19'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: NOTES - creation notes TestBorderline
+              type: http
+              seq: 7
+            http:
+              method: POST
+              url: http://localhost:8080/api/notes/patient/{{idTestBorderline}}
+              body:
+                type: json
+                data: |-
+                  {
+                      "contenu": "Le patient déclare qu'il ressent beaucoup de stress au travail Il se plaint également que son audition est anormale dernièrement",
+                      "date": "2026-07-07"
+                    }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+                - name: idTestNone
+                  value: '19'
+                - name: idTestBorderline
+                  value: '20'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: NOTES - creation notes TestBorderline2
+              type: http
+              seq: 9
+            http:
+              method: POST
+              url: http://localhost:8080/api/notes/patient/{{idTestBorderline}}
+              body:
+                type: json
+                data: |-
+                  {
+                      "contenu": "Le patient déclare avoir fait une réaction aux médicaments au cours des 3 derniers mois Il remarque également que son audition continue d'être anormale",
+                      "date": "2026-07-07"
+                    }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+                - name: idTestNone
+                  value: '19'
+                - name: idTestBorderline
+                  value: '20'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: NOTES - creation notes TestInDanger
+              type: http
+              seq: 9
+            http:
+              method: POST
+              url: http://localhost:8080/api/notes/patient/{{idTestInDanger}}
+              body:
+                type: json
+                data: |-
+                  {
+                      "contenu": "Le patient déclare qu'il fume depuis peu",
+                      "date": "2026-07-07"
+                    }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+                - name: idTestNone
+                  value: '19'
+                - name: idTestBorderline
+                  value: '20'
+                - name: idTestInDanger
+                  value: '21'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: NOTES - creation notes TestInDanger2
+              type: http
+              seq: 10
+            http:
+              method: POST
+              url: http://localhost:8080/api/notes/patient/{{idTestInDanger}}
+              body:
+                type: json
+                data: |-
+                  {
+                      "contenu": "Le patient déclare qu'il est fumeur et qu'il a cessé de fumer l'année dernière Il se plaint également de crises d’apnée respiratoire anormales Tests de laboratoire indiquant un taux de cholestérol LDL élevé",
+                      "date": "2026-07-07"
+                    }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+                - name: idTestNone
+                  value: '19'
+                - name: idTestBorderline
+                  value: '20'
+                - name: idTestInDanger
+                  value: '21'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: NOTES - creation notes TestEarlyOnset
+              type: http
+              seq: 11
+            http:
+              method: POST
+              url: http://localhost:8080/api/notes/patient/{{idTestEarlyOnset}}
+              body:
+                type: json
+                data: |-
+                  {
+                      "contenu": "Le patient déclare qu'il lui est devenu difficile de monter les escaliers Il se plaint également d’être essoufflé Tests de laboratoire indiquant que les anticorps sont élevés Réaction aux médicaments",
+                      "date": "2026-07-07"
+                    }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+                - name: idTestNone
+                  value: '19'
+                - name: idTestBorderline
+                  value: '20'
+                - name: idTestInDanger
+                  value: '21'
+                - name: idTestEarlyOnset
+                  value: '4'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: NOTES - creation notes TestEarlyOnset2
+              type: http
+              seq: 12
+            http:
+              method: POST
+              url: http://localhost:8080/api/notes/patient/{{idTestEarlyOnset}}
+              body:
+                type: json
+                data: |-
+                  {
+                      "contenu": "Le patient déclare qu'il a mal au dos lorsqu'il reste assis pendant longtemps",
+                      "date": "2026-07-07"
+                    }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+                - name: idTestNone
+                  value: '19'
+                - name: idTestBorderline
+                  value: '20'
+                - name: idTestInDanger
+                  value: '21'
+                - name: idTestEarlyOnset
+                  value: '4'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: NOTES - creation notes TestEarlyOnset3
+              type: http
+              seq: 13
+            http:
+              method: POST
+              url: http://localhost:8080/api/notes/patient/{{idTestEarlyOnset}}
+              body:
+                type: json
+                data: |-
+                  {
+                      "contenu": "Le patient déclare avoir commencé à fumer depuis peu Hémoglobine A1C supérieure au niveau recommandé",
+                      "date": "2026-07-07"
+                    }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+                - name: idTestNone
+                  value: '19'
+                - name: idTestBorderline
+                  value: '20'
+                - name: idTestInDanger
+                  value: '21'
+                - name: idTestEarlyOnset
+                  value: '4'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+          - info:
+              name: NOTES - creation notes TestEarlyOnset4
+              type: http
+              seq: 14
+            http:
+              method: POST
+              url: http://localhost:8080/api/notes/patient/{{idTestEarlyOnset}}
+              body:
+                type: json
+                data: |-
+                  {
+                      "contenu": "Taille, Poids, Cholestérol, Vertige et Réaction",
+                      "date": "2026-07-07"
+                    }
+              auth:
+                type: bearer
+                token: '{{tokenInit}}'
+            runtime:
+              variables:
+                - name: ''
+                  value: ''
+                - name: idTestNone
+                  value: '19'
+                - name: idTestBorderline
+                  value: '20'
+                - name: idTestInDanger
+                  value: '21'
+                - name: idTestEarlyOnset
+                  value: '4'
+            settings:
+              encodeUrl: true
+              timeout: 0
+              followRedirects: true
+              maxRedirects: 5
+bundled: true
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    exportedAt: '2026-07-22T20:08:02.855Z'
+    exportedUsing: Bruno

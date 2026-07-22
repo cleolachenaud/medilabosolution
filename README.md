@@ -18,9 +18,8 @@
 Il est situé ici src/main/resources/application.properties 
  
 - **tests fonctionnels**  
-  - Des tests sont disponibles sur Bruno. 
-  - Au lancement, attention les données du patient sont dépendante de la base de tests. 
-  - Pour que cela fonctionne correctement il faudra enregistrer un patient en base, et modifier les variables d'environnement qui concernent "mou bouillon" (patient 7)  
+  - Des tests sont disponibles sur Bruno dans le dossier Bruno à la racine du projet.  
+  Il y a au choix un dossier zip, un .yaml, ou simplement le report.html pour vérifier que tout est bien passé (sans les lancer) 
   	
 - **Installation et build**  
   - Cloner le repository git : git clone {URL du projet}
@@ -74,7 +73,7 @@ Cette application doit pouvoir :
 	- Description : modifier les informations administratives d’un patient déjà connu de la base de données.  
 	- Entrées : Nom, prénom, date de naissance, sexe, adresse, téléphone.  
 	- Sorties : modification des informations.  
-	- Règles métier : Lors d'une modification, la date de naissance doit obligatoirement être redemandée et ressaisie.  
+	- Règles métier : Le médecin peut modifier les informations du patient autant de fois que nécessaire.  
 	- **créer une note :**  
 	- Description : enregistrer le compte rendu médical de rendez-vous pour pouvoir le relire plus tard  
 	- Entrées : le compte rendu.  

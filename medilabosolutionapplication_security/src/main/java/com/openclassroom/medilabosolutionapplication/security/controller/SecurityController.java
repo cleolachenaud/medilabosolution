@@ -64,16 +64,4 @@ public class SecurityController {
                 .body("Identifiants invalides");
         }
     }
-	/*
-    @GetMapping
-    public ResponseEntity<String> hello() {
-        return ResponseEntity.ok("Hello!");
-    }
-
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('role_user')")
-    public ResponseEntity<String> helloUser() {
-        return ResponseEntity.ok("Hello From User!");
-    }
-    */
 }

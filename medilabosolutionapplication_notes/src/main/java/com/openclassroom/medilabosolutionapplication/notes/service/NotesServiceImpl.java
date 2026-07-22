@@ -85,7 +85,8 @@ public class NotesServiceImpl implements INotesService{
 	public NotesDTO notesToNotesDTO(Notes note) {
 		NotesDTO noteDTO = new NotesDTO();
 		noteDTO.setContenu(note.getNotes());
-		if (note.getDate() != null) { // je transforme la date Instant (pratique pour bien enregistrer précisément dans la bdd en localdate, qui est plus lisible pour l'utilisateur
+		if (note.getDate() != null) { 
+			// transformation de la date instant en localdate
 	        LocalDate localDate = note.getDate().atZone(ZoneId.systemDefault()).toLocalDate();
 	        noteDTO.setDate(localDate);
 	    }

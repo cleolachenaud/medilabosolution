@@ -55,9 +55,6 @@ public class NotesControllerTest {
 
         mockMvc.perform(get("/api/notes/patient/1"))
                 .andExpect(status().isOk())
-                //.andExpect(jsonPath("$[0].id").value("note1"))
-                //.andExpect(jsonPath("$[0].patientId").value(1))
-                //.andExpect(jsonPath("$[0].contenu").value("Test note"))
                 ;
 
         verify(notesService).findByPatientId(1);
@@ -90,9 +87,6 @@ public class NotesControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(noteDTO)))
                 .andExpect(status().isCreated())
-                //.andExpect(jsonPath("$.id").value("newId"))
-                //.andExpect(jsonPath("$.patientId").value(1))
-                //.andExpect(jsonPath("$.contenu").value("Nouvelle note"))
                 ;
 
         verify(notesService).createNoteForPatient(eq(1), eq("Nouvelle note"));

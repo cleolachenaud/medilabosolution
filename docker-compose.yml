@@ -46,8 +46,6 @@ services:
             # Dans Docker, le Front doit appeler la Gateway par son nom de service, pas localhost
             SPRING_CLOUD_OPENFEIGN_CLIENT_GATEWAY_URL: http://gateway:8080
             SPRING_CLOUD_OPENFEIGN_CLIENT_SECURITY_URL: http://security:8087
-            #SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/medilabosolution
-            #SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/medilabosolution/protocol/openid-connect/certs
     notes:
         build: ./medilabosolutionapplication_notes
         networks:
