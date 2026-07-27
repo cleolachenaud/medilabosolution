@@ -9,9 +9,23 @@
 
 - **Docker** est nécessaire pour executer les microservices en conteneurs. 
 
-- **Les dépendances externes** suivantes doivent être accessibles :    
-- MongoDB pour la base de données NoSQL.  
+- **Les dépendances externes** suivantes doivent être accessibles :   
+ 
+- MongoDB pour la base de données NoSQL (base notes).  
 - MySQL pour la base de données SQL (base patients).  
+- Ces bases doivent être installées sur la machine en amont. 
+
+- Pour la base de donnée SQL les paramètres d'application (application.properties du microservice patient) suivants doivent être renseigné : 
+	- spring.datasource.url (adresse jdbc de la base ex :jdbc:mysql://localhost:3306/medilabosolution?serverTimezone=UTC) 
+	- spring.datasource.username (le nom d'utilisateur de la base) 
+	- spring.datasource.password (le mot de passe de connexion de la base) 
+	- spring.jpa.properties.hibernate.dialect (le moteur de base ex : org.hibernate.dialect.MySQLDialect) 
+
+- Pour la base de donnée NOSQL les paramètres d'appplication (application.properties du microservice notes) suivants doivent être renseigné : 
+	- spring.data.mongodb.host (l'url de base ex : localhost ) 
+	- spring.data.mongodb.port (le port de la base) 
+	- spring.data.mongodb.database (le nom de l'instance) 
+
 
 - **Les fichiers de configurations** 
 - Chaque microservice dispose de son application.properties si besoin pour adapter selon son environnement si nécessaire  
@@ -22,12 +36,14 @@ Il est situé ici src/main/resources/application.properties
   Il y a au choix un dossier zip, un .yaml, ou simplement le report.html pour vérifier que tout est bien passé (sans les lancer) 
   	
 - **Installation et build**  
-  - Cloner le repository git : git clone {URL du projet}
+  - Installer en amont une base SQL et NOSQL. Lancer le script de la table PATIENT (pour la base de donnée SQL) 
+  - Cloner le repository git : git clone {URL du projet} 
+  - Affecter les bonnes valeurs des bases de données SQL et NOSQL (dans le dockerCompose patient/environnement et notes/environnement)
   - Compiler avec Maven (avec les tests unitaires) : mvn clean install
   - Construire et démarrer les images Docker : docker-compose up --build -d
   - Se connecter à l'application : http://localhost:8080
   - Arrêter les images Docker : docker-compose down
-  - si besoin un realmeExport a la racine du projet pour importer directement le realme Keycloak. Cependant la création du User sera malgré tout indispensable. 
+  - si besoin un realmeExport à la racine du projet pour importer directement le realme Keycloak. Cependant la création du User sera malgré tout indispensable. 
 
 ## Schémas de base de données MYSQL pour la base Patient
 ```SQL
